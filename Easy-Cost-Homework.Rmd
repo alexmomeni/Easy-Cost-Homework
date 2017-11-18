@@ -110,6 +110,7 @@ This dataset 1 quantitative variable (Price) and 5 qualitative variables (Suppli
 
 ```{r}
 res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10)
+
 fviz_pca_ind(res.pca, col.ind="contrib") + scale_color_gradient2(low="blue", mid="white", high="red", midpoint=4) + theme_minimal()
 
 ```
@@ -154,6 +155,12 @@ plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'var', title = '')
 drawn <- c("Type 1", "Type 2", "Supplier A", "PS", "PP", "Shape 2", "Shape 3", "Shape 1", "Lacquering", "Supplier B", "Supplier C","Hot Printing")
 plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'ind', invisible = c('ind', 'ind.sup'), title = '')
 
+
+
+
+
+
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3) #ncp = 3
 res.hcpc = HCPC(res.pca, nb.clust = -1
                 , graph = FALSE)
 
@@ -168,5 +175,24 @@ res.hcpc$desc.var
 
 fviz_nbclust(don, kmeans, method = "wss") + geom_vline(xintercept = 3, linetype = 2)
 
+
+
 ```
+
+
+*Comments the results and describe precisely one cluster*
+
+The cluster 1 is made of individuals sharing :
+- high values for the variable Mature.Volume. 
+- low values for the variables nb.of.pieces, Price, weight, Length and Diameter (variables are sorted from the weakest).
+
+The cluster 2 is made of individuals sharing :
+- high values for the variable nb.of.pieces. 
+- low values for the variables Mature.Volume, Diameter, Length, weight and Price (variables are sorted from the weakest).
+
+The cluster 3 is made of individuals such as 89, 90, 131, 161, 163 and 164. This group is characterized by :
+- high values for the variables Length, Diameter, weight and Price (variables are sorted from the strongest).
+- low values for the variables nb.of.pieces and Mature.Volume (variables are sorted from the weakest).
+
+
 
