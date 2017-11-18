@@ -36,9 +36,6 @@ Finish fixing this
 
 ```{r}
 
-plot_min <- min(raw_data$Price)
-plot_max <- max(raw_data$Price)
-
 price_density <- ggdensity(raw_data,x="Price",y = "..count..",
                         color="darkblue",
                         fill="lightblue",size=0.5, 
@@ -65,12 +62,17 @@ ggarrange(price_density, price_boxplot, ncol = 2, nrow = 1)
 *Does the Price depend on the Length? weight?*
 
 ```{r}
+
 ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm, color="darkblue")+ theme_minimal()
 
 ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm,color="red")+theme_minimal()
+
 ```
 
 *Does the Price depend on the Impermeability? Shape?*
+
+The plots below suggests there is some dependence on Impermeability - the medians differ significantly 
+
 
 ```{r}
 impermability_plot_1 <- ggdotplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",binwidth = 1,legend="none")
@@ -90,22 +92,73 @@ ggarrange(ggarrange(impermability_plot_1,impermability_plot_2,ncol = 2, nrow = 1
 *Which is the less expensive Supplier?*
 
 ```{r}
-#Do this question
+#Do this questions
 ```
 
 
-*One import point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect* 
+*One important point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect* 
+```{r}
+
+Mature.Volume_plot_2 <- gghistogram(raw_data,x="Mature.Volume",y="..count..")
+Mature.Volume_plot_2
+```
 
 
 *Perform a PCA on the dataset ScrewCap, explain briefly what are the aims of a PCA and how categorical variables are handled?*
 
-Aims of PCA: 
-Categorical Data are handled: 
+This dataset 1 quantitative variable (Price) and 5 qualitative variables (Supplier, Shape, Impermeability and Finishing) which are considered as illustrative.
 
 ```{r}
 res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10)
 fviz_pca_ind(res.pca, col.ind="contrib") + scale_color_gradient2(low="blue", mid="white", high="red", midpoint=4) + theme_minimal()
 
+```
+
+*Compute the correlation matrix between the variables and comment it with respect to the correlation circle*
+
+We first center and standardize the variables:
+
+```{r}
+#virer les outliers
+
+don <- as.matrix(raw_data[,-c(1,5,6,7,9,10)]) %>% scale()
+don_correlation <- cor(don)
+```
+
+
+6) On what kind of relationship PCA focuses? Is it a problem?
+
+7) Comment the PCA outputs.
+• Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.
+• Comment the percentage of inertia
+```{r}
+barplot(res.pca$eig[,2], names.arg = 1:nrow(res.pca$eig))
+drawn <- c("90", "89", "164", "161", "163", "131")
+plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'ind', invisible = 'quali', title = '')
+wilks.p <- structure(c(1.39936324848005e-27, 1.02072912984402e-22, 2.01088132732067e-11, 
+3.37174568997818e-07, 0.394546176405119), .Names = c("Impermeability", "Raw.Material", "Shape", "Supplier", "Finishing"))
+wilks.p
+
+sample = sample(rownames(res.pca$call$X), length(rownames(res.pca$call$X)))
+res.pca$call$X = res.pca$call$X[sample,]
+res.pca$ind$coord = res.pca$ind$coord[sample[!sample %in% rownames(res.pca$ind.sup$coord)],]
+res.pca$ind.sup$coord = res.pca$ind.sup$coord[sample[sample %in% rownames(res.pca$ind.sup$coord)],]
+
+drawn <-c("90", "89", "164", "161", "163", "131")
+hab <-"Impermeability"
+plotellipses(res.pca, axes = 1:2, invisible = 'quali', select = drawn, keepvar = hab, title = '')
+
+drawn <-c("Length", "Diameter", "weight", "nb.of.pieces", "Price")
+plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'var', title = '')
+
+drawn <- c("Type 1", "Type 2", "Supplier A", "PS", "PP", "Shape 2", "Shape 3", "Shape 1", "Lacquering", "Supplier B", "Supplier C","Hot Printing")
+plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'ind', invisible = c('ind', 'ind.sup'), title = '')
+res.hcpc = HCPC(res.pca, nb.clust = -1, graph = FALSE)
+
+drawn <- c("90", "89", "164", "161", "163", "131")
+plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = drawn, title = '')
+dimdesc(res.pca, axes = 1:1)
+res.hcpc$desc.var
 
 ```
 
