@@ -1,0 +1,196 @@
+"","Supplier","Diameter","weight","nb.of.pieces","Shape","Impermeability","Finishing","Mature.Volume","Raw.Material","Price","Length"
+"1","Supplier A",3.78,3.78,2,"Shape 1","Type 1","Lacquering",60000,"PS",28.19338193,30.1183122744581
+"2","Supplier A",3.994,4.768,3,"Shape 2","Type 2","Lacquering",49000,"PS",35.34189524,31.6937255486846
+"3","Supplier A",3.994,4.768,3,"Shape 2","Type 2","Lacquering",55000,"PS",41.9472442,31.7381655505038
+"4","Supplier A",1.066,1.917,4,"Shape 2","Type 2","Lacquering",1500,"PS",26.76473114,8.47248547512366
+"5","Supplier A",1.179,1.261,5,"Shape 3","Type 1","Hot Printing",215000,"PP",13.8415182,9.22299659756806
+"6","Supplier A",1.079,1.25,5,"Shape 2","Type 1","Hot Printing",75000,"PP",16.0258947,8.76460920694205
+"7","Supplier A",1.33,1.61,3,"Shape 2","Type 2","Lacquering",10000,"PS",14.02622918,10.4173473219809
+"8","Supplier A",1.6,2.06,5,"Shape 2","Type 2","Hot Printing",8000,"PS",30.19830407,12.4235855887887
+"9","Supplier A",1.6,2.06,5,"Shape 2","Type 2","Lacquering",8000,"PS",28.68949765,12.6651333823855
+"10","Supplier A",1.6,2.06,5,"Shape 2","Type 2","Lacquering",8000,"PS",28.26982964,13.0160954574682
+"11","Supplier A",0.79,1.06,4,"Shape 1","Type 1","Lacquering",800000,"PP",12.25618547,6.2090529344396
+"12","Supplier A",1.34,1.728,5,"Shape 1","Type 1","Hot Printing",35000,"PP",14.15303286,11.0504732156429
+"13","Supplier A",1.34,1.728,3,"Shape 1","Type 1","Hot Printing",230000,"PP",13.09357258,10.8516171403806
+"14","Supplier A",0.79,1.06,4,"Shape 1","Type 1","Lacquering",800000,"PP",9.416742569,6.41278281224216
+"15","Supplier A",1.578,1.877,5,"Shape 2","Type 1","Lacquering",11000,"PP",21.82222964,12.2946099901569
+"16","Supplier A",3.117,4.138,2,"Shape 1","Type 1","Lacquering",10000,"PS",13.41949423,25.1119793162477
+"17","Supplier A",2.752,4.04,4,"Shape 1","Type 1","Lacquering",12000,"PS",18.33362657,22.212716964375
+"18","Supplier A",1.578,1.877,5,"Shape 2","Type 1","Lacquering",11000,"PP",28.50662861,12.6374841714235
+"19","Supplier A",0.888,1.074,3,"Shape 1","Type 1","Lacquering",90000,"PP",10.72706022,6.85606805419422
+"21","Supplier A",0.522,0.767,3,"Shape 1","Type 1","Lacquering",165000,"PP",8.613041856,3.75818092012765
+"22","Supplier A",0.522,0.767,3,"Shape 1","Type 1","Lacquering",270000,"PP",8.513327948,4.0500413244935
+"23","Supplier A",0.99,1.4,3,"Shape 1","Type 1","Lacquering",10000,"PP",9.666676434,7.54585788360638
+"24","Supplier A",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",60000,"PP",13.03831395,3.72512672864587
+"25","Supplier A",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",75000,"PP",11.45535565,4.01922238303431
+"26","Supplier A",1.39,1.838,4,"Shape 2","Type 1","Lacquering",20000,"PP",15.79129779,11.1249699906312
+"27","Supplier A",1.176,1.494,5,"Shape 1","Type 1","Lacquering",35000,"PP",15.24447589,9.23887750363638
+"28","Supplier A",0.478,0.65,3,"Shape 1","Type 1","Lacquering",60000,"PP",6.598428197,3.91742042338345
+"29","Supplier A",0.99,1.4,3,"Shape 1","Type 1","Lacquering",20000,"PP",9.369246523,7.96697830666006
+"30","Supplier A",2.29,3.22,2,"Shape 2","Type 2","Lacquering",29000,"PS",24.22399015,18.3928390212968
+"31","Supplier A",1.176,1.494,5,"Shape 1","Type 1","Lacquering",45000,"PP",16.64346197,9.21010823512133
+"32","Supplier A",0.8,0.8,4,"Shape 1","Type 1","Hot Printing",11000,"PP",14.71328574,6.2314430261613
+"33","Supplier B",0.8,0.8,4,"Shape 1","Type 1","Hot Printing",121000,"PP",12.74393605,6.3278508720847
+"34","Supplier B",1.406,1.704,6,"Shape 2","Type 1","Hot Printing",86000,"PP",19.15122275,11.278252235766
+"35","Supplier B",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",75000,"PP",12.83905593,4.2852991817449
+"36","Supplier B",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",60000,"PP",12.83905593,4.04920842472006
+"37","Supplier B",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",4500,"PP",14.86894619,4.34308853403835
+"38","Supplier B",0.79,1.06,4,"Shape 1","Type 1","Lacquering",800000,"PP",11.1136492,6.4219367901644
+"39","Supplier B",1.176,1.494,5,"Shape 1","Type 1","Lacquering",45000,"PP",13.75250655,9.44730262641573
+"40","Supplier B",1.14,1.39,5,"Shape 1","Type 1","Lacquering",35000,"PP",14.99073961,9.31413453529305
+"41","Supplier B",1.406,1.704,6,"Shape 2","Type 1","Hot Printing",120000,"PP",16.72629579,11.1634755776208
+"42","Supplier B",1.406,1.704,6,"Shape 2","Type 1","Hot Printing",95000,"PP",15.99988765,11.5254430871894
+"43","Supplier B",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",4500,"PP",12.69750418,4.18621988463156
+"44","Supplier B",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",60000,"PP",11.70616242,3.93749191934615
+"45","Supplier B",0.508,2.029,4,"Shape 1","Type 1","Hot Printing",70000,"PP",11.70616242,4.11022932251924
+"46","Supplier B",1.176,1.494,5,"Shape 1","Type 1","Lacquering",45000,"PP",13.9443569,9.16182476682527
+"47","Supplier B",1.14,1.39,5,"Shape 1","Type 1","Lacquering",17500,"PP",17.33279504,9.22619494157252
+"48","Supplier B",1.14,1.39,5,"Shape 1","Type 1","Lacquering",17500,"PP",15.65220139,8.90632859123794
+"49","Supplier B",0.918,1.178,8,"Shape 4","Type 1","Lacquering",42000,"PP",19.42918254,7.04483311739157
+"50","Supplier B",0.527,0.696,4,"Shape 1","Type 1","Lacquering",250000,"PP",9.919978342,4.12835644177484
+"51","Supplier B",0.79,1.06,4,"Shape 1","Type 1","Lacquering",800000,"PP",12.26922307,6.21228493473548
+"52","Supplier B",3.03,3.9,3,"Shape 2","Type 2","Lacquering",10000,"PS",28.1445724,24.2729556724626
+"53","Supplier B",0.76,1.145,2,"Shape 1","Type 1","Lacquering",115000,"PP",13.65595685,5.83111019643792
+"54","Supplier B",0.76,1.145,2,"Shape 1","Type 1","Lacquering",115000,"PP",9.33749522,5.71549620971044
+"55","Supplier B",0.76,1.145,2,"Shape 1","Type 1","Lacquering",115000,"PP",10.11060128,6.15314207462061
+"56","Supplier B",0.67,0.93,2,"Shape 1","Type 1","Hot Printing",12000,"ABS",7.024923658,5.54727587400714
+"57","Supplier B",2.49169,3.79136,3,"Shape 1","Type 1","Hot Printing",20000,"ABS",39.78742276,20.0369757513021
+"58","Supplier B",1.404,1.86,4,"Shape 1","Type 1","Lacquering",35000,"PP",14.17693428,11.4722865473188
+"59","Supplier B",0.819,0.975,6,"Shape 2","Type 1","Hot Printing",50000,"PP",15.4183254,6.77259706340541
+"60","Supplier B",0.987,1.33,5,"Shape 1","Type 1","Lacquering",3000,"ABS",21.55066844,8.01338986308815
+"61","Supplier B",1.104,1.152,6,"Shape 4","Type 1","Lacquering",82000,"PP",26.61804949,8.34168233211561
+"62","Supplier B",1.19,1.64,6,"Shape 1","Type 1","Hot Printing",235000,"PP",15.48746453,9.60345993100367
+"63","Supplier B",0.994,1.614,3,"Shape 3","Type 1","Hot Printing",100000,"PP",14.18137686,8.16774859111697
+"64","Supplier B",0.994,1.614,3,"Shape 3","Type 1","Hot Printing",115000,"PP",14.11905566,7.96366982721051
+"65","Supplier B",1.121,1.365,4,"Shape 2","Type 1","Hot Printing",25000,"PP",13.78138753,8.76441666640633
+"66","Supplier B",0.932,1.225,5,"Shape 2","Type 1","Lacquering",140000,"PP",13.52065127,7.41830559763487
+"67","Supplier B",0.932,1.225,5,"Shape 2","Type 1","Lacquering",145000,"PP",11.83206621,7.64460200530312
+"68","Supplier B",0.932,1.225,4,"Shape 3","Type 1","Lacquering",92000,"PP",12.05677034,7.511958848166
+"69","Supplier B",0.964,1.29,5,"Shape 2","Type 1","Lacquering",92000,"PP",11.32003529,7.51010207251527
+"70","Supplier B",1.27,1.66,4,"Shape 1","Type 1","Lacquering",20000,"PP",11.59364903,10.3687584247268
+"71","Supplier B",1.22,1.469,5,"Shape 4","Type 1","Hot Printing",270000,"PP",17.92321912,9.66062566080523
+"72","Supplier B",0.997,1.279,3,"Shape 1","Type 1","Hot Printing",20000,"PP",13.32905353,7.93048549107644
+"73","Supplier B",1.066,1.528,4,"Shape 1","Type 1","Lacquering",80000,"PP",15.08291523,8.37384589942116
+"74","Supplier B",0.79,1.06,2,"Shape 1","Type 1","Lacquering",200000,"PP",12.31908002,6.08551355691954
+"75","Supplier B",1.22,1.469,5,"Shape 4","Type 1","Hot Printing",270000,"PP",18.53991542,9.93676077125267
+"76","Supplier B",1.22,1.469,5,"Shape 4","Type 1","Hot Printing",40000,"PP",19.5370545,9.82031914659731
+"77","Supplier B",0.898,1.129,3,"Shape 1","Type 1","Hot Printing",40000,"PP",10.1814843,7.15764287106144
+"78","Supplier B",0.857,1.075,4,"Shape 1","Type 1","Lacquering",300000,"PP",9.563779072,6.75386584082913
+"79","Supplier B",0.644,0.824,3,"Shape 1","Type 1","Lacquering",230000,"PP",10.80457034,5.24302116033401
+"80","Supplier B",0.932,1.225,5,"Shape 2","Type 1","Lacquering",140000,"PP",16.88377708,7.36384267582515
+"81","Supplier B",1.034,1.265,3,"Shape 1","Type 1","Lacquering",7000,"PP",10.21733848,8.34391657735527
+"82","Supplier B",0.767,1.025,2,"Shape 1","Type 1","Hot Printing",415000,"PP",7.856303035,6.36995939327023
+"83","Supplier B",1.066,1.528,4,"Shape 1","Type 1","Lacquering",80000,"PP",18.95304764,8.44379118354728
+"84","Supplier B",0.79,1.06,2,"Shape 1","Type 1","Lacquering",200000,"PP",11.89515695,6.23332319138959
+"85","Supplier B",0.67,0.88,4,"Shape 1","Type 1","Lacquering",50000,"PP",17.23055829,5.34461045092302
+"86","Supplier B",0.67,0.88,4,"Shape 1","Type 1","Lacquering",50000,"PP",17.28130555,5.35908211592988
+"87","Supplier B",1.045,1.345,4,"Shape 1","Type 1","Lacquering",50000,"PP",17.70703963,8.6119451598081
+"88","Supplier B",0.45,0.61,6,"Shape 1","Type 1","Lacquering",50000,"PP",14.78321873,3.81554162826368
+"89","Supplier B",5.395,6.711,4,"Shape 2","Type 2","Lacquering",20000,"ABS",46.61037174,43.3594476056937
+"90","Supplier B",5.347,7.112,4,"Shape 2","Type 2","Lacquering",20000,"ABS",45.29172985,42.8904234970708
+"91","Supplier B",0.876,1.24,7,"Shape 1","Type 1","Lacquering",70000,"PP",12.32846819,7.08930079734945
+"92","Supplier B",1.52,1.995,4,"Shape 2","Type 2","Hot Printing",8585,"PP",12.89757719,12.1587642441765
+"93","Supplier B",0.4458,0.6252,4,"Shape 1","Type 1","Lacquering",266784,"PP",7.966986221,3.36924261206143
+"94","Supplier B",0.4774,0.6185,4,"Shape 1","Type 1","Lacquering",195000,"PP",8.011558213,3.77448529085189
+"95","Supplier B",0.987,1.239,5,"Shape 1","Type 1","Lacquering",3500,"ABS",18.44765429,7.53063946690945
+"96","Supplier B",0.987,1.239,5,"Shape 1","Type 1","Lacquering",3500,"ABS",19.14321694,8.13443805793934
+"97","Supplier B",0.987,1.239,5,"Shape 1","Type 1","Lacquering",3500,"ABS",15.67352079,8.23395198118492
+"98","Supplier B",0.987,1.239,5,"Shape 1","Type 1","Lacquering",3500,"ABS",21.88778413,7.85980995939672
+"99","Supplier B",0.966,1.279,3,"Shape 1","Type 1","Hot Printing",245000,"PP",13.17538193,7.31341757114838
+"100","Supplier B",0.966,1.279,3,"Shape 1","Type 1","Hot Printing",245000,"PP",13.98555744,7.4969722490032
+"101","Supplier B",0.792,0.994,3,"Shape 1","Type 1","Hot Printing",25000,"PP",20.58419387,6.29403661034145
+"102","Supplier B",1.235,1.661,6,"Shape 2","Type 2","Hot Printing",25000,"PP",27.00565864,10.0972405475698
+"103","Supplier B",2.898,2.898,3,"Shape 2","Type 2","Hot Printing",27000,"PP",16.02599419,23.0403127229703
+"104","Supplier B",0.966,1.279,2,"Shape 1","Type 1","Hot Printing",245000,"PP",14.38441307,7.49950232542797
+"105","Supplier B",2.799,3.897,2,"Shape 1","Type 1","Lacquering",10000,"ABS",19.6899041,22.4660190829068
+"106","Supplier B",1.92917,2.53499,4,"Shape 2","Type 2","Lacquering",1900,"PS",20.44776475,15.2237995799697
+"107","Supplier B",0.644,0.824,3,"Shape 1","Type 1","Lacquering",330000,"PP",8.994383988,5.12018200507843
+"108","Supplier B",2.8,3.48,3,"Shape 2","Type 2","Lacquering",13000,"PS",29.59941418,22.5864546836445
+"109","Supplier B",0.742,0.991,2,"Shape 1","Type 1","Hot Printing",413000,"PP",11.16439646,5.76494089204002
+"110","Supplier B",0.752,1.057,4,"Shape 2","Type 1","Hot Printing",374000,"PP",11.24312256,5.96113311314156
+"111","Supplier B",1.618,1.96,5,"Shape 4","Type 1","Hot Printing",48000,"PP",21.92085407,13.0191302249645
+"112","Supplier B",1.22,1.469,6,"Shape 4","Type 1","Hot Printing",300000,"PP",19.99063397,9.52186956148066
+"113","Supplier B",1.16819,1.48594,2,"Shape 1","Type 1","Lacquering",8730,"PP",14.54416375,9.21755281590436
+"114","Supplier B",1.19,1.64,6,"Shape 1","Type 1","Hot Printing",45000,"PP",14.74043978,9.61959212486872
+"115","Supplier B",1.19,1.64,6,"Shape 1","Type 1","Lacquering",239500,"PP",15.1468899,9.34419996089852
+"116","Supplier B",0.994,1.614,3,"Shape 3","Type 1","Hot Printing",100000,"PP",15.6128334,7.71330925202634
+"117","Supplier B",0.994,1.614,3,"Shape 3","Type 1","Hot Printing",115000,"PP",15.6128334,8.08610714443307
+"118","Supplier B",0.715,0.95,3,"Shape 1","Type 1","Lacquering",35000,"PP",10.92233972,5.64751448728413
+"119","Supplier B",1.22,1.469,5,"Shape 4","Type 1","Hot Printing",270000,"PP",29.16013684,9.6822739540442
+"120","Supplier B",0.715,0.95,3,"Shape 1","Type 1","Lacquering",30000,"PP",9.434988024,5.83938950539414
+"121","Supplier B",0.742651862,1.531,5,"Shape 3","Type 1","Lacquering",5000,"PP",22.59238389,5.95990135894106
+"122","Supplier B",1.22,1.6,4,"Shape 1","Type 1","Lacquering",24000,"PP",19.85724258,9.66298035658984
+"123","Supplier B",1.22,1.6,3,"Shape 1","Type 1","Hot Printing",24000,"PP",20.16884854,9.65890990037878
+"124","Supplier B",0.941,1.39,3,"Shape 1","Type 1","Lacquering",15000,"ABS",10.10201292,7.42430190157876
+"125","Supplier B",0.626,0.89,4,"Shape 1","Type 1","Lacquering",15000,"ABS",7.622787655,4.9393158372557
+"126","Supplier B",0.705309,0.926666,5,"Shape 1","Type 1","Lacquering",92000,"PP",13.56646468,5.36534854111895
+"127","Supplier B",0.987,1.33,5,"Shape 1","Type 1","Lacquering",3500,"PP",16.16752417,7.89609093730772
+"128","Supplier B",1.19,1.64,6,"Shape 1","Type 1","Hot Printing",160000,"PP",16.38121444,9.75046238197089
+"129","Supplier B",1.27329,1.64555,6,"Shape 1","Type 1","Lacquering",30000,"PP",18.77761418,10.2874388910969
+"130","Supplier B",0.79,1.06,2,"Shape 1","Type 1","Lacquering",200000,"PP",13.07573408,6.16871325525726
+"131","Supplier B",4.38,5.4,3,"Shape 2","Type 2","Lacquering",12000,"PS",29.41627741,35.3381965343823
+"132","Supplier B",4.38,5.4,3,"Shape 2","Type 2","Lacquering",12000,"PS",30.52111532,35.2771818972915
+"133","Supplier B",0.939,1.214,5,"Shape 1","Type 1","Lacquering",5000,"ABS",14.08399875,7.72256214982736
+"134","Supplier B",1.045,1.345,4,"Shape 1","Type 1","Lacquering",57000,"PP",15.71171702,8.01474509029364
+"135","Supplier B",0.67,0.88,4,"Shape 1","Type 1","Lacquering",33000,"PP",14.32420151,5.13080822097445
+"136","Supplier B",0.67,0.88,4,"Shape 1","Type 1","Lacquering",24000,"PP",14.3737686,5.53500026075863
+"137","Supplier B",1.14,1.329,4,"Shape 1","Type 1","Lacquering",15000,"PP",14.41410367,9.17395733213808
+"138","Supplier B",0.45,0.61,6,"Shape 1","Type 1","Lacquering",57000,"PP",11.76675053,3.88061649667702
+"139","Supplier B",0.79,1.06,2,"Shape 1","Type 1","Lacquering",200000,"PP",9.911807182,6.55764434901588
+"140","Supplier B",1.066,1.528,4,"Shape 1","Type 1","Lacquering",92000,"PP",17.18495679,8.42876711306738
+"141","Supplier B",1.304,1.573,4,"Shape 2","Type 1","Hot Printing",100000,"PP",18.10395624,10.6550429452009
+"142","Supplier B",1.304,1.573,4,"Shape 1","Type 1","Hot Printing",30000,"PP",18.85181055,10.4586699153053
+"143","Supplier B",1.304,1.573,4,"Shape 1","Type 1","Hot Printing",30000,"PP",21.61537461,10.090417864202
+"144","Supplier B",1.304,1.573,4,"Shape 1","Type 1","Hot Printing",39000,"PP",21.40042654,10.5694062425246
+"145","Supplier B",1.304,1.573,4,"Shape 1","Type 1","Hot Printing",21000,"PP",21.83032268,10.6669276284873
+"146","Supplier B",0.931,1.322,2,"Shape 1","Type 1","Lacquering",218000,"PP",12.53811289,7.63187937644306
+"147","Supplier B",0.644,0.824,3,"Shape 1","Type 1","Lacquering",230000,"PP",12.06077082,5.34630310919918
+"148","Supplier B",0.931,1.322,2,"Shape 1","Type 1","Lacquering",204592,"PS",9.125606515,7.44164212521339
+"149","Supplier B",0.527,0.696,3,"Shape 1","Type 1","Lacquering",250000,"PP",9.171027177,4.23575055263414
+"150","Supplier B",0.527,0.696,3,"Shape 1","Type 1","Lacquering",250000,"PP",10.84753706,3.90729968364919
+"151","Supplier B",0.527,0.696,3,"Shape 1","Type 1","Lacquering",287500,"PP",11.54032703,4.23802844073963
+"152","Supplier B",0.527,0.696,3,"Shape 1","Type 1","Lacquering",250000,"PP",10.7381195,4.08564819714925
+"153","Supplier B",1.012,1.538,4,"Shape 1","Type 1","Lacquering",60000,"PP",15.63020748,7.78629018750343
+"154","Supplier B",1.012,1.538,4,"Shape 1","Type 1","Lacquering",40000,"PP",19.12601317,8.0024326583737
+"155","Supplier B",1.012,1.538,4,"Shape 1","Type 1","Lacquering",69000,"PP",15.68613299,8.16300218203625
+"156","Supplier B",0.76159373,1.531,5,"Shape 3","Type 1","Lacquering",187000,"PP",17.1961584,6.13550714535985
+"157","Supplier B",0.59,0.79,7,"Shape 1","Type 1","Hot Printing",100000,"PP",9.957867134,4.5928662347187
+"158","Supplier B",0.86,1.101,5,"Shape 1","Type 1","Hot Printing",75000,"PP",12.37663738,6.74639600647115
+"159","Supplier B",0.9,1.117,4,"Shape 1","Type 1","Hot Printing",8000,"ABS",20.87292547,6.81291356824395
+"160","Supplier B",0.9,1.117,5,"Shape 1","Type 1","Hot Printing",8000,"ABS",21.30917382,7.10872759564529
+"161","Supplier B",5.118,5.2,3,"Shape 2","Type 2","Lacquering",8000,"PS",37.15911348,40.6929881811286
+"162","Supplier B",3.51,4.36,3,"Shape 1","Type 2","Hot Printing",2400,"PS",27.28786588,27.9880134532681
+"163","Supplier B",4.81,5.85,3,"Shape 1","Type 1","Lacquering",15000,"ABS",30.99145193,38.689194616619
+"164","Supplier B",5.35,6.591,3,"Shape 2","Type 2","Lacquering",26000,"PS",34.50975793,42.3640441787037
+"165","Supplier B",4.382,5.401,3,"Shape 2","Type 2","Lacquering",11000,"PS",33.25530021,34.9470482405079
+"166","Supplier B",1.905,2.51,3,"Shape 2","Type 1","Lacquering",1000,"ABS",20.100684,15.0423830299965
+"167","Supplier B",1.09,1.09,3,"Shape 1","Type 1","Lacquering",24900,"PP",12.49450327,8.87108953164414
+"168","Supplier B",0.58,0.747,3,"Shape 1","Type 1","Lacquering",23500,"ABS",10.64077696,4.7329541125793
+"169","Supplier B",0.58,0.747,3,"Shape 1","Type 1","Lacquering",10000,"ABS",12.57768299,4.38976826284248
+"170","Supplier B",0.58,0.747,3,"Shape 1","Type 1","Lacquering",13500,"ABS",11.7037154,5.02850654838054
+"171","Supplier B",0.641,0.8,3,"Shape 1","Type 1","Lacquering",52000,"PP",6.477450684,5.1486534749751
+"172","Supplier B",2.91,3.59,5,"Shape 2","Type 2","Lacquering",10000,"PS",26.45376076,22.9865521844252
+"173","Supplier B",0.729,1.165,3,"Shape 1","Type 1","Lacquering",10000,"ABS",6.920584622,5.45673862329229
+"174","Supplier B",1.254,1.665,4,"Shape 1","Type 1","Lacquering",50000,"PP",11.12752056,10.0536269210329
+"175","Supplier B",1.013,1.124,4,"Shape 1","Type 1","Lacquering",25000,"PP",13.87677081,8.07208031652889
+"176","Supplier B",0.705309,0.926666,5,"Shape 1","Type 1","Lacquering",92000,"PP",9.014860461,5.37724080645137
+"177","Supplier B",0.705309,0.926666,5,"Shape 1","Type 1","Lacquering",92000,"PP",11.78197809,5.49603999353822
+"178","Supplier B",0.705309,0.926666,5,"Shape 1","Type 1","Lacquering",92000,"PP",11.77442501,5.58978330074556
+"179","Supplier B",1.436,1.9,2,"Shape 1","Type 1","Hot Printing",28000,"PS",15.79807268,11.3896205662919
+"180","Supplier B",1.538,1.823,4,"Shape 2","Type 1","Hot Printing",28000,"PS",14.09498567,11.9178122937472
+"181","Supplier B",1.351,1.768,3,"Shape 1","Type 1","Lacquering",8730,"PS",12.76266791,10.4309825360017
+"182","Supplier B",1.371,1.52,2,"Shape 1","Type 1","Lacquering",8730,"PS",13.27428989,11.0553383799068
+"183","Supplier C",1.256,1.496,8,"Shape 2","Type 1","Lacquering",110000,"PP",13.37524593,10.3110402577899
+"184","Supplier C",0.908,1.14,7,"Shape 2","Type 1","Lacquering",110000,"PP",11.32962009,7.21150742591801
+"185","Supplier C",1.256,1.496,7,"Shape 2","Type 1","Lacquering",110000,"PP",13.53178466,10.1391562159436
+"186","Supplier C",0.908,1.14,7,"Shape 2","Type 1","Lacquering",110000,"PP",11.6909175,7.06303307405008
+"187","Supplier C",1.476,1.75,7,"Shape 2","Type 1","Hot Printing",150000,"PP",14.12968236,11.8783464774618
+"188","Supplier C",1.476,1.75,10,"Shape 2","Type 1","Hot Printing",150000,"PP",14.16115352,11.7356962604504
+"189","Supplier C",1.197,1.435,4,"Shape 1","Type 1","Lacquering",12000,"PP",13.2665031,9.59487794203543
+"190","Supplier C",1.197,1.435,4,"Shape 1","Type 1","Lacquering",12000,"PP",15.86359242,9.5698365337024
+"191","Supplier C",1.197,1.435,4,"Shape 1","Type 1","Lacquering",12000,"PP",19.29365659,10.0408880386587
+"192","Supplier C",1.197,1.435,4,"Shape 1","Type 1","Lacquering",12000,"PP",14.43159395,9.49550147436635
+"193","Supplier C",1.029,1.321,7,"Shape 1","Type 1","Lacquering",40000,"PP",15.46493142,8.4310080438151
+"194","Supplier C",1.029,1.321,7,"Shape 1","Type 1","Lacquering",40000,"PP",16.13060954,8.04476497223194
+"195","Supplier C",1.029,1.321,7,"Shape 1","Type 1","Lacquering",40000,"PP",17.7864684,8.33090738393796
+"196","Supplier C",1.029,1.321,7,"Shape 1","Type 1","Lacquering",40000,"PP",17.98589622,8.45892558437867

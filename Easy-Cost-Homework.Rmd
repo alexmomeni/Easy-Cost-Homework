@@ -1,0 +1,83 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+**Libraries**
+
+```{r}
+library(FactoMineR)
+library(tidyr)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(ggpubr)
+library(factoextra)
+```
+
+
+
+**Screw Caps Data**
+```{r}
+raw_data <- read.table("ScrewCaps.csv",header=TRUE, sep=",", dec=".", row.names=1)
+summary(raw_data)
+```
+
+
+
+**Univariate & Descriptive Statistics**
+
+How is the distribution of the Price? Comment your plot with respect to the quartiles of the Price.
+
+```{r}
+
+plot_min <- min(raw_data$Price)
+plot_max <- max(raw_data$Price)
+
+price_density <- ggdensity(raw_data,x="Price",y = "..count..",
+                         
+                        color="darkblue",
+                        fill="lightblue",size=0.5, 
+                        alpha=0.2, 
+                        title = "Price Distribution", 
+                        linetype = "solid", add = c("median"))
+                        
+
+price_boxplot <- ggboxplot(raw_data$Price, 
+                           width = 0.5, 
+                           fill ="lightgray", 
+                           outlier.colour = "darkblue")+
+  rotate()+
+  #scale_x_discrete(limits=c(plot_min,plot_max))+
+  theme_transparent()
+
+price_boxplot_grob <- ggplotGrob(price_boxplot)
+
+price_density + annotation_custom(grob = price_boxplot_grob, xmin= plot_min, xmax = plot_max, ymin= 0 , ymax=2)
+
+```
+
+
+Does the Price depend on the Length? weight?
+
+```{r}
+ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm)
+
+ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm)
+
+```
+
+Does the Price depend on the Impermeability? Shape?
+```{r}
+impermability_plot_1 <- ggdotplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",binwidth = 1)
+
+impermability_plot_2 <- ggboxplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco")
+
+shape_plot_1 <- ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm)
+```
+
+Which is the less expensive Supplier?
+
+
+
+
