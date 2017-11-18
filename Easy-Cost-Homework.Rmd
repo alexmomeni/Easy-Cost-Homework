@@ -13,6 +13,7 @@ library(magrittr)
 library(ggplot2)
 library(ggpubr)
 library(factoextra)
+library(gridExtra)
 ```
 
 
@@ -25,9 +26,13 @@ summary(raw_data)
 
 
 
-**Univariate & Descriptive Statistics**
+**Univariate & Bivariate Descriptive Statistics**
 
-How is the distribution of the Price? Comment your plot with respect to the quartiles of the Price.
+*How is the distribution of the Price? Comment your plot with respect to the quartiles of the Price.*
+
+As illustrated in the plots below, the distribution of the price is bimodal.
+
+Finish fixing this 
 
 ```{r}
 
@@ -35,49 +40,72 @@ plot_min <- min(raw_data$Price)
 plot_max <- max(raw_data$Price)
 
 price_density <- ggdensity(raw_data,x="Price",y = "..count..",
-                         
                         color="darkblue",
                         fill="lightblue",size=0.5, 
                         alpha=0.2, 
                         title = "Price Distribution", 
-                        linetype = "solid", add = c("median"))
-                        
-
+                        linetype = "solid", add = c("median"),ylim=c(0,20),xlim=c(0,50)) +scale_x_continuous(limits=c(0,50))
+  
 price_boxplot <- ggboxplot(raw_data$Price, 
-                           width = 0.5, 
+                           width = 0.1, 
                            fill ="lightgray", 
-                           outlier.colour = "darkblue")+
-  rotate()+
-  #scale_x_discrete(limits=c(plot_min,plot_max))+
-  theme_transparent()
+                           outlier.colour = "darkblue", outlier.shape=4.2, ylim=c(0,50),
+                           xlim=c(0,20)) + rotate() 
+price_boxplot_grob <- ggplotGrob(price_boxplot) 
 
-price_boxplot_grob <- ggplotGrob(price_boxplot)
+price_density + annotation_custom(grob = price_boxplot_grob, xmin= 0, xmax = 50, ymin= -4.5 , ymax=6)
 
-price_density + annotation_custom(grob = price_boxplot_grob, xmin= plot_min, xmax = plot_max, ymin= 0 , ymax=2)
+ggarrange(price_density, price_boxplot, ncol = 2, nrow = 1)
 
 ```
 
 
-Does the Price depend on the Length? weight?
+
+
+*Does the Price depend on the Length? weight?*
 
 ```{r}
-ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm)
+ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm, color="darkblue")+ theme_minimal()
 
-ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm)
-
+ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm,color="red")+theme_minimal()
 ```
 
-Does the Price depend on the Impermeability? Shape?
+*Does the Price depend on the Impermeability? Shape?*
+
 ```{r}
-impermability_plot_1 <- ggdotplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",binwidth = 1)
+impermability_plot_1 <- ggdotplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",binwidth = 1,legend="none")
 
-impermability_plot_2 <- ggboxplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco")
+shape_plot_1 <- ggdotplot(raw_data,x="Shape",y="Price",color = "Shape", palette = "npg",binwidth = 1,legend="none")
 
-shape_plot_1 <- ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm)
+impermability_plot_2 <- ggboxplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",legend="none")
+
+shape_plot_2 <- ggboxplot(raw_data,x="Shape",y="Price",color = "Shape", palette = "npg", legend = "none")
+
+ggarrange(ggarrange(impermability_plot_1,impermability_plot_2,ncol = 2, nrow = 1),
+           ggarrange(shape_plot_1,shape_plot_2,ncol = 2, nrow = 1),
+           ncol = 1, nrow = 2)
+
 ```
 
-Which is the less expensive Supplier?
+*Which is the less expensive Supplier?*
+
+```{r}
+#Do this question
+```
 
 
+*One import point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect* 
 
+
+*Perform a PCA on the dataset ScrewCap, explain briefly what are the aims of a PCA and how categorical variables are handled?*
+
+Aims of PCA: 
+Categorical Data are handled: 
+
+```{r}
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10)
+fviz_pca_ind(res.pca, col.ind="contrib") + scale_color_gradient2(low="blue", mid="white", high="red", midpoint=4) + theme_minimal()
+
+
+```
 
