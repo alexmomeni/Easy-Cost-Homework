@@ -153,12 +153,20 @@ plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'var', title = '')
 
 drawn <- c("Type 1", "Type 2", "Supplier A", "PS", "PP", "Shape 2", "Shape 3", "Shape 1", "Lacquering", "Supplier B", "Supplier C","Hot Printing")
 plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'ind', invisible = c('ind', 'ind.sup'), title = '')
-res.hcpc = HCPC(res.pca, nb.clust = -1, graph = FALSE)
+
+res.hcpc = HCPC(res.pca, nb.clust = -1
+                , graph = FALSE)
 
 drawn <- c("90", "89", "164", "161", "163", "131")
 plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = drawn, title = '')
 dimdesc(res.pca, axes = 1:1)
 res.hcpc$desc.var
+
+```
+
+```{r}
+
+fviz_nbclust(don, kmeans, method = "wss") + geom_vline(xintercept = 3, linetype = 2)
 
 ```
 
