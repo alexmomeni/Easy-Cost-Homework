@@ -9,30 +9,35 @@ output: html_notebook
 library(FactoMineR)
 library(tidyr)
 library(dplyr)
+library(tidyverse)
 library(magrittr)
 library(ggplot2)
 library(ggpubr)
 library(factoextra)
 library(gridExtra)
+library(moments)
 ```
 
 
 
 **Screw Caps Data**
 ```{r}
+
 raw_data <- read.table("ScrewCaps.csv",header=TRUE, sep=",", dec=".", row.names=1)
+head(raw_data)
 summary(raw_data)
 ```
 
-
-
-**Univariate & Bivariate Descriptive Statistics**
+**We start with univariate and bivariate descriptive statistics. Using appropriate plot(s) or summaries answer the following questions.**
 
 *How is the distribution of the Price? Comment your plot with respect to the quartiles of the Price.*
 
-As illustrated in the plots below, the distribution of the price is bimodal.
+From the quantile data, the summary statistics are given by: median, 1Q and 3Q  as 14.432, 11.864 and 19.04 respectively. 
 
-Finish fixing this 
+The plots, the kurtosis and the skewness parameters suggest the price follows a bimodal distribution that is "skewed right". 
+The major mode is around 14 and the antimode is around 29. Furthermore, 50% of the prices in the range 11.864 and 19.04. This is consistent with graph where the majority of the density is concentrated inside this range and a long right tail of prices outside. 
+
+The boxplot supports this analyis and suggests the values in the tail are outliers. 
 
 ```{r}
 
@@ -40,70 +45,108 @@ price_density <- ggdensity(raw_data,x="Price",y = "..count..",
                         color="darkblue",
                         fill="lightblue",size=0.5, 
                         alpha=0.2, 
-                        title = "Price Distribution", 
-                        linetype = "solid", add = c("median"),ylim=c(0,20),xlim=c(0,50)) +scale_x_continuous(limits=c(0,50))
+                        title = "Screw Cap Price Distribution", 
+                        linetype = "solid", add = c("median"))+ font("title", size = 12,face="bold")
   
-price_boxplot <- ggboxplot(raw_data$Price, 
-                           width = 0.1, 
-                           fill ="lightgray", 
-                           outlier.colour = "darkblue", outlier.shape=4.2, ylim=c(0,50),
-                           xlim=c(0,20)) + rotate() 
-price_boxplot_grob <- ggplotGrob(price_boxplot) 
+price_boxplot <- ggboxplot(raw_data$Price, width = 0.1, fill ="lightgray", outlier.colour = "darkblue", outlier.shape=4.2, ylab = "Price", xlab = "Screw Caps" , title = "Price Box Plot") + rotate() + font("title", size = 12,face="bold")
 
-price_density + annotation_custom(grob = price_boxplot_grob, xmin= 0, xmax = 50, ymin= -4.5 , ymax=6)
+price_quantile <- quantile(raw_data$Price)
 
-ggarrange(price_density, price_boxplot, ncol = 2, nrow = 1)
+ggarrange(price_density, price_boxplot, ncol = 1, nrow = 2)
+
+price_quantile
+skewness(raw_data$Price)
+kurtosis(raw_data$Price)
+
 
 ```
-
-
 
 
 *Does the Price depend on the Length? weight?*
 
+We examine Price vs. Length, log(Price) vs. log(Length); Price vs. weight, log(Price) vs. log(weight) and provide the summary for each. 
+
+The plots suggest somewhat of a relationship between the variables, but observing the results of the F and T tests confirm this to a high degree of significance. 
+
 ```{r}
+price_length <- ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm, color="darkgreen")+ theme_minimal()
+price_length_log <- ggplot(raw_data, aes(x=log(Length), y=log(Price))) + geom_point() + geom_smooth(method=lm, color="darkgreen")+ theme_minimal()
+price_weight <- ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm,color="red")+theme_minimal()
+price_weight_log <- ggplot(raw_data, aes(x=log(weight), y=log(Price))) + geom_point() + geom_smooth(method=lm,color="red")+theme_minimal()
 
-ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm, color="darkblue")+ theme_minimal()
+ggarrange(ggarrange(price_length, price_length_log, ncol = 2, nrow = 1), ggarrange(price_weight, price_weight_log, ncol = 2, nrow = 1), ncol = 1, nrow = 2)
 
-ggplot(raw_data, aes(x=weight, y=Price)) + geom_point() + geom_smooth(method=lm,color="red")+theme_minimal()
-
+summary(lm(formula = Price ~ Length, raw_data))
+summary(lm(formula = log(Price) ~ log(Length), raw_data))
+summary(lm(formula = Price ~ weight, raw_data))
+summary(lm(formula = log(Price) ~ log(weight), raw_data))
 ```
 
-*Does the Price depend on the Impermeability? Shape?*
 
-The plots below suggests there is some dependence on Impermeability - the medians differ significantly 
+*Does the Price depend on the Impermeability? Shape?*  --> binomial test?
 
+The plots below suggests there is dependency on Impermeability - the medians differ significantly. 
 
 ```{r}
 impermability_plot_1 <- ggdotplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",binwidth = 1,legend="none")
-
 shape_plot_1 <- ggdotplot(raw_data,x="Shape",y="Price",color = "Shape", palette = "npg",binwidth = 1,legend="none")
-
 impermability_plot_2 <- ggboxplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",legend="none")
-
 shape_plot_2 <- ggboxplot(raw_data,x="Shape",y="Price",color = "Shape", palette = "npg", legend = "none")
 
 ggarrange(ggarrange(impermability_plot_1,impermability_plot_2,ncol = 2, nrow = 1),
            ggarrange(shape_plot_1,shape_plot_2,ncol = 2, nrow = 1),
            ncol = 1, nrow = 2)
-
 ```
 
 *Which is the less expensive Supplier?*
 
+The answer to this question depends on the definition of expensive. 
+
+First, examine the following absolute metrics (this can be seen via the boxplot)
+1) Absolute price - Supplier B cheapest (6.477451). However, Supplier B is also the supplier which has the highest absolute price (46.610372)
+2) Average Price - Supplier C cheapest (14.88869)
+
+Second, examine the following relative metrics:  
+3) Average Price / Unit Length - Supplier A (1.505043)
+4) Average Price / Unit weight - Supplier A (9.013902)
+5) Average Price / Unit Diameter - Supplier A (11.95632)
+
+The result above suggest Supplier A has the cheapest average price per unit of production.
+
+The analysis however is not complete given we do not have a definition of cheapest price. Even the scatter and box plots below suggest suppliers may cater to specific product ranges. It also ignores the categorical data which could provide some insights into cheapest price for certain product features Furthermore, we have not performed  statistical tests to examine the significance of these differences. 
+
 ```{r}
-#Do this questions
+
+supplier_plot_1 <- ggboxplot(raw_data,x="Supplier",y="Price",color = "Supplier", palette = c("darkblue","red","darkgreen"),legend="none") + rotate()
+supplier_plot_2 <- ggscatter(raw_data,x="Length",y="Price",color = "Supplier", palette = c("darkblue","red","darkgreen"),xscale= "log10", yscale="log10")
+supplier_plot_3 <- ggscatter(raw_data,x="weight",y="Price",color = "Supplier", palette = c("darkblue","red","darkgreen"),xscale= "log10", yscale="log10")
+supplier_plot_4 <- ggscatter(raw_data,x="Diameter",y="Price",color = "Supplier", palette = c("darkblue","red","darkgreen"),xscale= "log10", yscale="log10")
+
+supplier_statistics <- raw_data %>% group_by(Supplier) %>%  summarise( "Average Price" = mean(Price), "Average Length" = mean(Length),"Average weight" = mean(weight),"Average Diameter" = mean(Diameter),  "Average Price / Length" = mean(Price)/mean(Length), "Average Price / weight" = mean(Price)/mean(weight), "Average Price / Diameter" = mean(Price)/mean(Diameter))
+
+supplier_plot_1
+supplier_plot_2
+supplier_plot_3
+supplier_plot_4
+head(supplier_statistics)
+
 ```
 
 
-*One important point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect* 
+
+**One important point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect**
+
+There are four data points which seem suspect - they have the same characteristics for Diameter, weight, nb.of.pieces, Impermeability, Finishing, Raw.Material and Mature.Volume. They differ in their supplier, price and length. These suggest some error in collating the data (system error / default data). 
+
 ```{r}
 
-Mature.Volume_plot_2 <- gghistogram(raw_data,x="Mature.Volume",y="..count..")
-Mature.Volume_plot_2
+Mature.Volume_plot <- gghistogram(raw_data,x="Mature.Volume",y="..count..", color = "darkblue", fill = "lightgrey") + theme_minimal()
+Mature.Volume_plot
+raw_data %>% filter (Mature.Volume > 6e+05 ) 
 ```
 
-We decide to remove the outliers:
+
+For the rest of the analysis, the 4 data points above are disregarded. 
 
 ```{r}
 library(dplyr)
@@ -112,38 +155,42 @@ raw_data <- raw_data %>% filter (Mature.Volume < 6e+05 )
 
 
 
-*Perform a PCA on the dataset ScrewCap, explain briefly what are the aims of a PCA and how categorical variables are handled?*
+**Perform a PCA on the dataset ScrewCap, explain briefly what are the aims of a PCA and how categorical variables are handled?**
 
-This dataset 1 quantitative variable (Price) and 5 qualitative variables (Supplier, Shape, Impermeability and Finishing) which are considered as illustrative.
+This dataset 1 quantitative variable (Price) and 5 qualitative variables (Supplier, Shape, Impermeability and Finishing) which are considered as illustrative for now.
 
 ```{r}
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,axes = c(1,2))
 
-fviz_pca_ind(res.pca, col.ind="contrib") + scale_color_gradient2(low="blue", mid="white", high="red", midpoint=4) + theme_minimal()
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, graph = TRUE)
+
+fviz_pca_ind(res.pca)
+fviz_pca_ind(res.pca, col.ind="cos2", label=c("quali"), geom = "point") + scale_color_gradient2(low="lightblue", mid="blue", high="darkblue", midpoint=0.6)+ theme_minimal() 
 
 ```
 
+
+
 *Compute the correlation matrix between the variables and comment it with respect to the correlation circle*
 
-We first center and standardize the variables:
+
+First center and standardize the variables:
 
 ```{r}
-#virer les outliers
-
 don <- as.matrix(raw_data[,-c(1,5,6,7,9,10)]) %>% scale()
 don_correlation <- cor(don)
 ```
 
 
-6) On what kind of relationship PCA focuses? Is it a problem?
+**On what kind of relationship PCA focuses? Is it a problem?**
 
-7) Comment the PCA outputs.
-• Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.
-• Comment the percentage of inertia
+**Comment the PCA outputs.**
+*Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.*
+*Comment the percentage of inertia*
+
 ```{r}
 barplot(res.pca$eig[,2], names.arg = 1:nrow(res.pca$eig))
 drawn <- c("90", "89", "164", "161", "163", "131")
-plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'ind', invisible = 'quali', title = '')
+plot.PCA(res.pca, select = "cos2 5", axes = 1:2, choix = 'ind', invisible = 'quali', title = '')
 wilks.p <- structure(c(1.39936324848005e-27, 1.02072912984402e-22, 2.01088132732067e-11, 
 3.37174568997818e-07, 0.394546176405119), .Names = c("Impermeability", "Raw.Material", "Shape", "Supplier", "Finishing"))
 wilks.p
@@ -155,16 +202,13 @@ res.pca$ind.sup$coord = res.pca$ind.sup$coord[sample[sample %in% rownames(res.pc
 
 drawn <-c("90", "89", "164", "161", "163", "131")
 hab <-"Impermeability"
-plotellipses(res.pca, axes = 1:2, invisible = 'quali', select = drawn, keepvar = hab, title = '')
+plotellipses(res.pca, axes = 1:2, invisible = 'quali', select = "cos2 5", keepvar = hab, title = '')
 
 drawn <-c("Length", "Diameter", "weight", "nb.of.pieces", "Price")
-plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'var', title = '')
+plot.PCA(res.pca, select = "cos2 5", axes = 1:2, choix = 'var', title = '')
 
 drawn <- c("Type 1", "Type 2", "Supplier A", "PS", "PP", "Shape 2", "Shape 3", "Shape 1", "Lacquering", "Supplier B", "Supplier C","Hot Printing")
-plot.PCA(res.pca, select = drawn, axes = 1:2, choix = 'ind', invisible = c('ind', 'ind.sup'), title = '')
-
-
-
+plot.PCA(res.pca, select = "cos2 5", axes = 1:2, choix = 'ind', invisible = c('ind', 'ind.sup'), title = '')
 
 
 
@@ -173,7 +217,7 @@ res.hcpc <- HCPC(res.pca, nb.clust = -1
                 , graph = FALSE)
 
 drawn <- c("90", "89", "164", "161", "163", "131")
-plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = drawn, title = '')
+plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = '')
 dimdesc(res.pca, axes = 1:1)
 res.hcpc$desc.var
 
