@@ -187,24 +187,47 @@ plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 The first task is to center and standardize the variables. Then the correlation matrix is computed. All variable vectors are quite near to the boundary of the correlation circle on the variables plot - thus the variables are relatively well projected on the 2 dimensional subspace. We now turn our attention to correlations between variables. 
 
 The correlations can be visualised through the angles between variables on the correlation matrix. This can be related to the correlation matrix:
-- the Dimaeter, the Length and the weight expose very strong corrleation: the angle between them is close to 0, suggesting correlation close to 1
-- the three variables above are at an angle sightly wider than a right angle to both nb.of.pieces and Mature.Volume in the cirlce which suggests 
+- Diameter, Length and weight expose very strong corrleation: the angle between them is close to 0, suggesting correlation close to 1.
+- The three variables above are at an angle sightly wider than a right angle to both nb.of.pieces and Mature.Volume in the cirlce which suggests slightly negative correlation.
+- Price is highlighly correlatd to the three variables above
+- Equally, Mature.Volume and nb.of.pieces are at a slightly wider angle than a right angle which suggests slightly negative correlation.
+
+
 
 ```{r}
 don <- as.matrix(raw_data[,-c(1,5,6,7,9,10)]) %>% scale()
 don_correlation <- cor(don)
 don_correlation
+plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 ```
 
-**On what kind of relationship PCA focuses? Is it a problem?**
+**6) On what kind of relationship PCA focuses? Is it a problem?**
 
- PCA focuses on the linear rela- tionships between variables. More complex links also exist, such as quadratic relationships, logarithmics, exponential functions, and so forth, but they are not studied in PCA. This may seem restrictive, but in practice many relation- ships can be considered linear, at least for an initial approximation.
+PCA focuses on the linear relationships between continuous variables. Given complex links also exist, such as quadratic relationships, logarithmics, exponential functions, and so forth, this may seem restrictive, but in practice many relationships can be considered linear, at least for an initial approximation. However, there is obviously non-linear datasets for which PCA will have pitfalls (e.g. spiral dataset). Furthermore, in PCA categorical variables cannot be active variables, which can be restrictive. 
 
+**7) Comment the PCA outputs**
 
-
-**Comment the PCA outputs.**
 *Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.*
+
+The coordinates for Type 2 are (3.30430162 , 0.0020023422) for the first two principal components 
+The coordinate for PS are (2.69084507 -0.2539199538) for the first two principal components 
+
+Both categories have a high coordinate for the first principal component. Given the correlation circle shows high correlation between the first component and price, diameter, length and weight, this suggest Type 2 and PS have high values for these variables. 
+
+```{r}
+res.pca$quali.sup$coord
+```
+
 *Comment the percentage of inertia*
+
+```{r}
+res.pca$eig
+
+```
+
+
+
+
 
 ```{r}
 barplot(res.pca$eig[,2], names.arg = 1:nrow(res.pca$eig))
@@ -312,11 +335,31 @@ catdes(raw_data, num.var=6)
 ```{r}
 res.famd <- FAMD (raw_data, ncp = 5, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
 
-
 res.hcpc.famd <- HCPC(res.famd, nb.clust = -1
                 , graph = TRUE)
 
 plot.HCPC(res.hcpc.famd, choice = 'map', draw.tree = FALSE, select = c(1,10), title = '')
+
+raw_data_clust <- res.hcpc.famd$data.clust
+
+res.famd_2 <- FAMD (raw_data_clust, ncp = 6, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
+res.famd_2$eig
+
+coordinates$Price <- raw_data_clust$Price
+coordinates <- as.data.frame(res.famd_2$ind$coord)
+coordinates
+
+fit <- lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6,raw_data_clust)
+p <- raw_data_clust[1,]
+
+training_data <- raw_data_clust %>%  filter(Supplier == "Supplier A" ) 
+
+predict_price <- function (x) {
+  fit <-  lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6, raw_data_clust)
+  p <- as.data.frame(predict.FAMD(res.famd_2,x)$coord) 
+  p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
+  return(predict(fit,p))
+}
 
 
 ```
@@ -328,10 +371,6 @@ summary(res.hcpc.famd)
 
 res.hcpc.famd$call$X$Dim.1
 
-library(e1071)
 
-svm.model <- svm(Price ~ ., data = raw_data[1:150, -c(1,5,7)], cost = 100, gamma = 1)
-svm.pred <- predict(svm.model, raw_data[151:191,-c(1,5,7,10)])
-View(svm.pred)
 ```
 
