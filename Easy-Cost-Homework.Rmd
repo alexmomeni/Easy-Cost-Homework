@@ -6,6 +6,7 @@ output: html_notebook
 **Libraries**
 
 ```{r}
+
 library(FactoMineR)
 library(tidyr)
 library(dplyr)
@@ -16,6 +17,7 @@ library(ggpubr)
 library(factoextra)
 library(gridExtra)
 library(moments)
+
 ```
 
 
@@ -28,9 +30,9 @@ head(raw_data)
 summary(raw_data)
 ```
 
-**We start with univariate and bivariate descriptive statistics. Using appropriate plot(s) or summaries answer the following questions.**
+**2) We start with univariate and bivariate descriptive statistics. Using appropriate plot(s) or summaries answer the following questions.**
 
-*How is the distribution of the Price? Comment your plot with respect to the quartiles of the Price.*
+*a) How is the distribution of the Price? Comment your plot with respect to the quartiles of the Price.*
 
 From the quantile data, the summary statistics are given by: median, 1Q and 3Q  as 14.432, 11.864 and 19.04 respectively. 
 
@@ -62,7 +64,7 @@ kurtosis(raw_data$Price)
 ```
 
 
-*Does the Price depend on the Length? weight?*
+*b) Does the Price depend on the Length? weight?*
 
 We examine Price vs. Length, log(Price) vs. log(Length); Price vs. weight, log(Price) vs. log(weight) and provide the summary for each. 
 
@@ -83,7 +85,7 @@ summary(lm(formula = log(Price) ~ log(weight), raw_data))
 ```
 
 
-*Does the Price depend on the Impermeability? Shape?*  --> binomial test?
+*c) Does the Price depend on the Impermeability? Shape?*  
 
 The plots below suggests there is dependency on Impermeability - the medians differ significantly. 
 
@@ -98,7 +100,7 @@ ggarrange(ggarrange(impermability_plot_1,impermability_plot_2,ncol = 2, nrow = 1
            ncol = 1, nrow = 2)
 ```
 
-*Which is the less expensive Supplier?*
+*d) Which is the less expensive Supplier?*
 
 The answer to this question depends on the definition of expensive. 
 
@@ -134,7 +136,7 @@ head(supplier_statistics)
 
 
 
-**One important point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect**
+**3) One important point in explanatory data analysis consists in identifying potential outliers. Could you give points which are suspect regarding the Mature.Volume variable? Give the characteristics (other features) of the observations that seem suspsect**
 
 There are four data points which seem suspect - they have the same characteristics for Diameter, weight, nb.of.pieces, Impermeability, Finishing, Raw.Material and Mature.Volume. They differ in their supplier, price and length. These suggest some error in collating the data (system error / default data). 
 
@@ -143,6 +145,7 @@ There are four data points which seem suspect - they have the same characteristi
 Mature.Volume_plot <- gghistogram(raw_data,x="Mature.Volume",y="..count..", color = "darkblue", fill = "lightgrey") + theme_minimal()
 Mature.Volume_plot
 raw_data %>% filter (Mature.Volume > 6e+05 ) 
+
 ```
 
 
@@ -150,38 +153,54 @@ For the rest of the analysis, the 4 data points above are disregarded.
 
 ```{r}
 library(dplyr)
-raw_data <- raw_data %>% filter (Mature.Volume < 6e+05 )  
+raw_data <- raw_data %>% filter (Mature.Volume < 6e+05 )
 ```
 
 
+**4) Perform a PCA on the dataset ScrewCap, explain briefly what are the aims of a PCA and how categorical variables are handled?**
 
-**Perform a PCA on the dataset ScrewCap, explain briefly what are the aims of a PCA and how categorical variables are handled?**
+Principal components analysis (PCA) is a technique for taking high-dimensional data, and using the dependencies between the variables to represent it in a more tractable, lower-dimensional form, without losing too much information - we try capture the essence of high dimentional data in a low dimensional representation. The aim of PCA is to draw conclusions from the linear relationships between variables by detecting the principal dimensions of variability. This may be for compression, denoising, data completion, anomaly detection or for preprocessing before supervised learning (improve performance / regularization to reduce overfitting).
 
-This dataset 1 quantitative variable (Price) and 5 qualitative variables (Supplier, Shape, Impermeability and Finishing) which are considered as illustrative for now.
+The categorical variables cannot be represented in the same way as the supplementary quantitative variables since it is not possible to calculate the correlation between a categorical variable and the principal components. The categorical variables here are handled as supplemetary variables on a purely illustrative basis  - they are not used to calculate the distance between inidividuals. We represent a categorical variable at the barycentre of all the individuals possessing that variable. A categorical variable on the PCA performed below can therefore be regarded as the mean individual obtained from the set of individuals who have it.
+
+Given our ultimate goal here is to explore data prior to a multiple regression, it is advisable to choose the explanatory variables for the regression model as active variables for PCA, and to project the variable to be explained (the dependent variable) as a supplementary variable. This gives some idea of the relationships between explanatory variables and thus of the need to select explanatory variables. This also gives us an idea of the quality of the regression: if the dependent variable is appropriately projected, it will be a well-fitted model. Thus we select Price as a supplementary variable. 
+
+The dataset in this exercise contains 6 supplementary variables:
+- 1 quantitative variable (Price)
+- 5 qualitative variables (Supplier, Shape, Impermeability and Finishing).  
+
 
 ```{r}
 
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, graph = TRUE)
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, graph = FALSE)
 
-fviz_pca_ind(res.pca)
-fviz_pca_ind(res.pca, col.ind="cos2", label=c("quali"), geom = "point") + scale_color_gradient2(low="lightblue", mid="blue", high="darkblue", midpoint=0.6)+ theme_minimal() 
+fviz_pca_ind(res.pca, col.ind="cos2", label=c("quali"), geom = "point", title = "Individual factor map (PCA)", habillage = "none") + scale_color_gradient2(low="lightblue", mid="blue", high="darkblue", midpoint=0.6) + theme_minimal() 
+plot.PCA(res.pca,choix = c("ind"),invisible = c("ind"))+theme_minimal()
+plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 
 ```
 
 
 
-*Compute the correlation matrix between the variables and comment it with respect to the correlation circle*
+**5) Compute the correlation matrix between the variables and comment it with respect to the correlation circle**
 
+The first task is to center and standardize the variables. Then the correlation matrix is computed. All variable vectors are quite near to the boundary of the correlation circle on the variables plot - thus the variables are relatively well projected on the 2 dimensional subspace. We now turn our attention to correlations between variables. 
 
-First center and standardize the variables:
+The correlations can be visualised through the angles between variables on the correlation matrix. This can be related to the correlation matrix:
+- the Dimaeter, the Length and the weight expose very strong corrleation: the angle between them is close to 0, suggesting correlation close to 1
+- the three variables above are at an angle sightly wider than a right angle to both nb.of.pieces and Mature.Volume in the cirlce which suggests 
 
 ```{r}
 don <- as.matrix(raw_data[,-c(1,5,6,7,9,10)]) %>% scale()
 don_correlation <- cor(don)
+don_correlation
 ```
 
-
 **On what kind of relationship PCA focuses? Is it a problem?**
+
+ PCA focuses on the linear rela- tionships between variables. More complex links also exist, such as quadratic relationships, logarithmics, exponential functions, and so forth, but they are not studied in PCA. This may seem restrictive, but in practice many relation- ships can be considered linear, at least for an initial approximation.
+
+
 
 **Comment the PCA outputs.**
 *Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.*
@@ -283,6 +302,7 @@ Characterization of each supplier
 ```{r}
 catdes(raw_data, num.var=1)
 catdes(raw_data, num.var=5)
+
 catdes(raw_data, num.var=6)
 
 
@@ -308,6 +328,10 @@ summary(res.hcpc.famd)
 
 res.hcpc.famd$call$X$Dim.1
 
+library(e1071)
 
+svm.model <- svm(Price ~ ., data = raw_data[1:150, -c(1,5,7)], cost = 100, gamma = 1)
+svm.pred <- predict(svm.model, raw_data[151:191,-c(1,5,7,10)])
+View(svm.pred)
 ```
 
