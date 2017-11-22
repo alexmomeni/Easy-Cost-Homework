@@ -178,6 +178,8 @@ fviz_pca_ind(res.pca, col.ind="cos2", label=c("quali"), geom = "point", title = 
 plot.PCA(res.pca,choix = c("ind"),invisible = c("ind"))+theme_minimal()
 plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 
+
+
 ```
 
 
@@ -258,7 +260,7 @@ res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3) #ncp = 
 res.hcpc <- HCPC(res.pca, nb.clust = -1
                 , graph = FALSE)
 
-drawn <- c("90", "89", "164", "161", "163", "131")
+drawn <- c("168")
 plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = '')
 dimdesc(res.pca, axes = 1:1)
 res.hcpc$desc.var
@@ -381,6 +383,8 @@ predict_new_price <- function (x) {
   p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
   return(predict(fit,p))
 }
+
+
 
 
 
