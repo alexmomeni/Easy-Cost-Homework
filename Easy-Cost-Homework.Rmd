@@ -345,14 +345,13 @@ raw_data_clust <- res.hcpc.famd$data.clust
 res.famd_2 <- FAMD (raw_data_clust, ncp = 6, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
 res.famd_2$eig
 
-coordinates$Price <- raw_data_clust$Price
 coordinates <- as.data.frame(res.famd_2$ind$coord)
+coordinates$Price <- raw_data_clust$Price
 coordinates
 
 fit <- lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6,raw_data_clust)
 p <- raw_data_clust[1,]
 
-training_data <- raw_data_clust %>%  filter(Supplier == "Supplier A" ) 
 
 predict_price <- function (x) {
   fit <-  lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6, raw_data_clust)
@@ -360,6 +359,29 @@ predict_price <- function (x) {
   p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
   return(predict(fit,p))
 }
+
+
+percentage_learning <- 0.80
+
+learning_set <- sample_n(raw_data_clust, percentage_learning * dim(raw_data_clust)[1])
+res.famd_learning <- FAMD (learning_set, ncp = 5, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
+res.hcpc.famd_learning <- HCPC(res.famd_learning, nb.clust = -1
+                , graph = TRUE)
+
+res.famd_learning_2 <- FAMD (learning_set_clust, ncp = 6, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
+
+learning_set_clust <- res.hcpc.famd_learning$data.clust
+coordinates_learning <- as.data.frame(res.famd_learning_2$ind$coord)
+coordinates_learning$Price <- learning_set_clust$Price
+coordinates_learning
+
+predict_new_price <- function (x) {
+  fit <-  lm(Price ~ coordinates_learning$Dim.1 + coordinates_learning$Dim.2 + coordinates_learning$Dim.3 + coordinates_learning$Dim.4 + coordinates_learning$Dim.5 + coordinates_learning$Dim.6, learning_set_clust)
+  p <- as.data.frame(predict.FAMD(res.famd_2,x)$coord) 
+  p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
+  return(predict(fit,p))
+}
+
 
 
 ```
