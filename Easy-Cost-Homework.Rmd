@@ -5,6 +5,8 @@ output: html_notebook
 
 **Libraries**
 
+We load the packages relevant for the exercise. 
+
 ```{r}
 
 library(FactoMineR)
@@ -21,12 +23,15 @@ library(moments)
 ```
 
 
-
 **Screw Caps Data**
+
+The data ScrewCap.csv contains 195 lots of screw caps described by 11 variables. Diameter, weight, length are the physical characteristics of the cap; nb.of.pieces corresponds to the number of elements of the cap (the picture above corresponds to a cap with 2 pieces: the valve (clapet) is made of a different material); Mature.volume corresponds to the number of caps ordered and bought by the compagny (number in the lot).
+
 ```{r}
 
 raw_data <- read.table("ScrewCaps.csv",header=TRUE, sep=",", dec=".", row.names=1)
 head(raw_data)
+dim(raw_data)
 summary(raw_data)
 ```
 
@@ -50,7 +55,12 @@ price_density <- ggdensity(raw_data,x="Price",y = "..count..",
                         title = "Screw Cap Price Distribution", 
                         linetype = "solid", add = c("median"))+ font("title", size = 12,face="bold")
   
+
+  
+
 price_boxplot <- ggboxplot(raw_data$Price, width = 0.1, fill ="lightgray", outlier.colour = "darkblue", outlier.shape=4.2, ylab = "Price", xlab = "Screw Caps" , title = "Price Box Plot") + rotate() + font("title", size = 12,face="bold")
+
+
 
 price_quantile <- quantile(raw_data$Price)
 
@@ -60,7 +70,6 @@ price_quantile
 skewness(raw_data$Price)
 kurtosis(raw_data$Price)
 
-
 ```
 
 
@@ -68,7 +77,7 @@ kurtosis(raw_data$Price)
 
 We examine Price vs. Length, log(Price) vs. log(Length); Price vs. weight, log(Price) vs. log(weight) and provide the summary for each. 
 
-The plots suggest somewhat of a relationship between the variables, but observing the results of the F and T tests confirm this to a high degree of significance. 
+The plots suggest somewhat of a relationship between the variables, but observing the R-sqaured values and the results of the F and T tests confirm this to a high degree of significance. 
 
 ```{r}
 price_length <- ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm, color="darkgreen")+ theme_minimal()
@@ -87,7 +96,10 @@ summary(lm(formula = log(Price) ~ log(weight), raw_data))
 
 *c) Does the Price depend on the Impermeability? Shape?*  
 
-The plots below suggests there is dependency on Impermeability - the medians differ significantly. 
+Concerning Impermeability, the plots below show that there are some striking differences between the price distribution for Type 1 and Type 2, in particular observing the medians and the IQR. 
+
+Concerning Shapes, it is difficult to make any real conclusions regarding shape 3 and shape 4 given there are so few data points. We turn our attention to Shape 1 and Shape 2 - the IQR for these two shapes are seemingly different. This is confirmed by the result of the T Test. 
+
 
 ```{r}
 impermability_plot_1 <- ggdotplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",binwidth = 1,legend="none")
@@ -95,9 +107,14 @@ shape_plot_1 <- ggdotplot(raw_data,x="Shape",y="Price",color = "Shape", palette 
 impermability_plot_2 <- ggboxplot(raw_data,x="Impermeability",y="Price",color = "Impermeability", palette = "jco",legend="none")
 shape_plot_2 <- ggboxplot(raw_data,x="Shape",y="Price",color = "Shape", palette = "npg", legend = "none")
 
+
 ggarrange(ggarrange(impermability_plot_1,impermability_plot_2,ncol = 2, nrow = 1),
            ggarrange(shape_plot_1,shape_plot_2,ncol = 2, nrow = 1),
            ncol = 1, nrow = 2)
+
+summary(lm(Price~ Impermeability, data=raw_data))
+summary(lm(Price~ Shape, data=raw_data))
+
 ```
 
 *d) Which is the less expensive Supplier?*
@@ -149,11 +166,25 @@ raw_data %>% filter (Mature.Volume > 6e+05 )
 ```
 
 
-For the rest of the analysis, the 4 data points above are disregarded. 
+For the rest of the analysis, the 4 data points above are disregarded.
 
 ```{r}
 library(dplyr)
 raw_data <- raw_data %>% filter (Mature.Volume < 6e+05 )
+```
+
+
+We will quickly check that there are no other noticeable outliers - this is indeed the case.  
+ 
+```{r}
+
+check_1 <- gghistogram(raw_data,x="Length",y="..count..", color = "darkblue", fill = "lightgrey") + theme_minimal()
+check_2 <- gghistogram(raw_data,x="Diameter",y="..count..", color = "darkblue", fill = "lightgrey") + theme_minimal()
+check_3 <- gghistogram(raw_data,x="weight",y="..count..", color = "darkblue", fill = "lightgrey") + theme_minimal()
+check_4 <- gghistogram(raw_data,x="nb.of.pieces",y="..count..", color = "darkblue", fill = "lightgrey",bins=40) + theme_minimal()
+
+ggarrange(ggarrange(check_1,check_2,ncol=2,nrow=1),ggarrange(check_3,check_4,ncol=2,nrow=1),ncol=1,nrow=2)
+
 ```
 
 
@@ -177,9 +208,6 @@ res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, graph = FALSE)
 fviz_pca_ind(res.pca, col.ind="cos2", label=c("quali"), geom = "point", title = "Individual factor map (PCA)", habillage = "none") + scale_color_gradient2(low="lightblue", mid="blue", high="darkblue", midpoint=0.6) + theme_minimal() 
 plot.PCA(res.pca,choix = c("ind"),invisible = c("ind"))+theme_minimal()
 plot.PCA(res.pca,choix = c("var"))+theme_minimal()
-
-
-
 ```
 
 
@@ -189,10 +217,18 @@ plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 The first task is to center and standardize the variables. Then the correlation matrix is computed. All variable vectors are quite near to the boundary of the correlation circle on the variables plot - thus the variables are relatively well projected on the 2 dimensional subspace. We now turn our attention to correlations between variables. 
 
 The correlations can be visualised through the angles between variables on the correlation matrix. This can be related to the correlation matrix:
-- Diameter, Length and weight expose very strong corrleation: the angle between them is close to 0, suggesting correlation close to 1.
+- Diameter, Length and weight expose very strong corrleation: the angle between them is close to 0, suggesting correlation close to 1. These are all very highly correlated to the first Principal Component.
 - The three variables above are at an angle sightly wider than a right angle to both nb.of.pieces and Mature.Volume in the cirlce which suggests slightly negative correlation.
 - Price is highlighly correlatd to the three variables above
 - Equally, Mature.Volume and nb.of.pieces are at a slightly wider angle than a right angle which suggests slightly negative correlation.
+
+Mature Volume and Number of Pieces are well projected on the 2nd dimensional subspace and then are not really correlated to Lenght, weight, Price and Diameter. Plus, we notice that Mature Volume and Number of Pieces are negatively correlated which means that when the more pieces we have for a product the less the compagny command this kind of product.
+This correlations are well explained in the covariance matrix. The cells that correspond to a combinaison of highly correlated features have a cov higher than 0.9 and the cells that correspond to a combinaison of uncorrelated (orthogonal) features have a cov lower than 0.2 - 0.3.
+
+The PCA focuses on the relationships between the continuous variables. In fact, the PCA compute the vectors which are the synthetic variables the most correlated to all the continuous variables. Then, its possible to study the projection of the observations/features on this vectors and discuss the link between them. The issue is that the PCA does not handle categorical variables to the computation of the synthetic vectors.
+
+Let's now focus on the individual factor map : The barycentre related to $Impermeability = Type2$ and $Raw.Material = PS$ are near to the first synthetic axe which means that this two categories Type2 and PS are highly correlated to this axe and then, given the previous analysis to Lenght, weight, price and diameter. In fact, for instance, we have seen that Type 2 have a higher price in average than Type 1. We can say also for example than a PS product is related to a high diameter.
+
 
 
 
@@ -222,11 +258,12 @@ res.pca$quali.sup$coord
 
 *Comment the percentage of inertia*
 
+Below we see the percentage of inertia explained by each component. 
+
+
 ```{r}
 res.pca$eig
-
 ```
-
 
 
 
@@ -335,7 +372,7 @@ catdes(raw_data, num.var=6)
 
 
 ```{r}
-res.famd <- FAMD (raw_data, ncp = 5, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
+res.famd <- FAMD (raw_data, ncp = 5, graph = TRUE, sup.var =  c(10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
 
 res.hcpc.famd <- HCPC(res.famd, nb.clust = -1
                 , graph = TRUE)
@@ -383,9 +420,6 @@ predict_new_price <- function (x) {
   p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
   return(predict(fit,p))
 }
-
-
-
 
 
 ```
