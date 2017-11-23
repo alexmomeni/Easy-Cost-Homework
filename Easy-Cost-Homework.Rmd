@@ -209,11 +209,13 @@ The dataset in this exercise contains 6 supplementary variables:
 
 ```{r}
 
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, graph = FALSE)
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, graph = FALSE,scale = TRUE)
 
 fviz_pca_ind(res.pca, col.ind="cos2", label=c("quali"), geom = "point", title = "Individual factor map (PCA)", habillage = "none") + scale_color_gradient2(low="lightblue", mid="blue", high="darkblue", midpoint=0.6) + theme_minimal() 
 plot.PCA(res.pca,choix = c("ind"),invisible = c("ind"))+theme_minimal()
 plot.PCA(res.pca,choix = c("var"))+theme_minimal()
+
+
 ```
 
 
@@ -232,29 +234,40 @@ don <- as.matrix(raw_data[,-c(1,5,6,7,9,10)]) %>% scale()
 don_correlation <- cor(don)
 don_correlation
 plot.PCA(res.pca,choix = c("var"))+theme_minimal()
+
 ```
 
 **6) On what kind of relationship PCA focuses? Is it a problem?**
 
 PCA focuses on the linear relationships between continuous variables. Given complex links also exist, such as quadratic relationships, logarithmics, exponential functions, and so forth, this may seem restrictive, but in practice many relationships can be considered linear, at least for an initial approximation. However, there is obviously non-linear datasets for which PCA will have pitfalls (e.g. spiral dataset). Furthermore, in PCA categorical variables cannot be active variables, which can be restrictive. 
-**7) Comment the PCA outputs**
+
+**7) Comment the PCA outputs** ######FINISH THIS ###### WILKS TEST FROM FACTOMINER
 
 *Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.*
 
-The coordinates for Type 2 are (3.30430162 , 0.0020023422) for the first two principal components. It has a very significant p value for Dim 1 -  the coordinate issignificantly different from 0 on the first component. 
-The coordinate for PS are (2.69084507 -0.2539199538) for the first two principal components. It has a very significant p value for Dim 1-  the coordinate issignificantly different from 0 on the first component. 
+The coordinates for Type 2 are (3.28 , 0.01) for the first two principal components. It has a very significant p value for Dim 1 and thus  the coordinate is significantly different from 0 on the first component. 
+The coordinate for PS are (2.67, -0.25) for the first two principal components. It has a very significant p value for Dim 1 and thus he coordinate is significantly different from 0 on the first component. 
 
 Furthermore, given the correlation circle shows high correlation between the first component and price, diameter, length and weight, this suggest Type 2 and PS have high values for these variables. 
 
+In fact,  looking at the p-values we can say that both of the categories Type 1, Type 2, PS and PP have coordinates that are significantly different from 0 on the first component. As the value is positive (negative) for the Type 2 / PS (Type 1 / PP) we can say that the rows which include Type 2 / PS tended to have positive coordinates (or negative, respectively) on component 1 and thus are more correlated with the variables mentioned above (price,diameter, length and weight).
+
+Finally, we also consider the results from the wilk's test performed in the FactoInvestigate package. This indicates which variables are the best seperated on the plane (i,e, which one explain the best the distance between individuals, and the best qualitative variables to illutrate distance between individuals on the plane are Impermeability and Raw.Material. 
 
 ```{r}
 res.pca$quali.sup$coord
 dimdesc(res.pca, 1:2)
+wilks.p <-structure(c(3.63471614445021e-27, 1.29050347661083e-22, 4.08870696535012e-10, 
+3.73163828614179e-07, 0.284227353624445), .Names = c("Impermeability", 
+"Raw.Material", "Shape", "Supplier", "Finishing"))
+wilks.p
 ```
 
 *Comment the percentage of inertia*
 
-Below in the Scree plot we see the percentage of inertia explained by each component. Over 95% of the variance can be explained with the 3 first synthetic vectors in the PCA. Furthermore, we can see that the variance of the first component is explained in majority by Diameter, Length and weight as expected. In the second and third dimension by nb.of.pieces and Mature.Volume. 
+Below in the Scree plot we see the percentage of inertia explained by each component. The first two components explain 83.48% of the total dataset inertial - this means that 83.50% of the individuals (or variables) cloud total variability is explained by this plane. Over 95% of the variance can be explained with the 3 first synthetic vectors in the PCA. 
+
+We can also see that the variance of the first component is explained in majority by Diameter, Length and weight as expected. In the second and third dimension by nb.of.pieces and Mature.Volume respectively representing large contribution (~60%). 
 
 ```{r}
 res.pca$eig
@@ -280,9 +293,11 @@ We chose the maximum number of components as to not to lose any significant info
 
 We us the Elbow method and look at the knee to determine the number of clusters we keep 3 clusters here. 
 
+Recall that, the basic idea behind k-means clustering is to define clusters such that the total within-cluster variation is minimized. The total WSS measures the compactness of the clustering and we want it to be as small as possible. The Elbow method looks at the total WSS as a function of the number of clusters: one should choose a number of clusters so that the marginal cluster doesn’t improve WSS. Here this value is 3. 
+
 ```{r}
 #Perform PCA on 3 Principal Components
-res.pca_3 <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, graph = FALSE) 
+res.pca_3 <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, graph = FALSE, scale = TRUE) 
 
 #Use the Elbow method to determine the number of clusters to keep
 fviz_nbclust(res.pca_3$ind$coord, kmeans, method = "wss") + geom_vline(xintercept = 3, linetype = 2)
@@ -291,53 +306,114 @@ fviz_nbclust(res.pca_3$ind$coord, kmeans, method = "wss") + geom_vline(xintercep
 k_cluster <- kmeans(res.pca_3$ind$coord, 3)
 k_mean_data <- as.matrix(res.pca_3$ind$coord)
 plot(k_mean_data, col = k_cluster$cluster, pch = 20, frame = FALSE,  main = "K-means")
-
 ```
 
 **11) Perform an AHC on the selected k principal components of PCA.**
 
-Below we perform an AHB on the select 3 principal components of PCA. 
+Below we perform an AHC on the select 3 principal components of PCA. 
 
 ```{r}
 
-res.pca_3 <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, graph = FALSE) 
+res.pca_3 <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, graph = FALSE, scale = TRUE) 
 
-res.hcpc <- HCPC(res.pca_3, nb.clust = -1, graph = TRUE)
+res.hcpc <- HCPC(res.pca_3, nb.clust = -1, graph = FALSE)
 
-plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = '')
+plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map')
 plot.HCPC(res.hcpc, choice = 'bar', draw.tree = FALSE, title = 'Inertia Gain')
-plot.HCPC(res.hcpc, choice = '3D.map', draw.tree = FALSE, title = '', angle=60)
-
-summary(res.hcpc)
+plot.HCPC(res.hcpc, choice = '3D.map', draw.tree = FALSE, title = 'Hierarchical Clustering on the Factor Map', angle=60)
+plot.HCPC(res.hcpc, choice = 'tree', draw.tree = FALSE, title = 'Hierarchical Clustering')
+ 
+res.hcpc$call$t$within[1:5]
+res.hcpc$call$t$within[1:5]
+1 - (res.hcpc$call$t$within[3]/res.hcpc$call$t$within[1])
 
 ```
 
 
 **12) Comments the results and describe precisely one cluster.**
 
-From the FactoInvestigate package, we get the basic analysis below:
+The classfication made on individuals reveals 3 clusters. 
 
-The cluster 1 is made of individuals sharing :4
+We now aim at describing the clusters. 
+
+For each quantitative variable, we build an analysis of variance model between the quantitative variable and the class variable, do a Fisher test to detect class effect and sort the variables by increasing p-value. We can directly find the results in the following objects: 
+
+```{r}
+res.hcpc$desc.var$quanti.var
+```
+
+For high values of Eta2, as seen in the lecture, there is a relation between the clustering and the quantitative variable. Thus we can say this is the case for Length, Diameter, weight and Mature.Volume. 
+
+We now turn our attention to describing the observations in a cluster using quantitative variables. 
+
+```{r}
+res.hcpc$desc.var$quanti
+```
+
+Below, we also illustrate clusters by considering paragons and specific indivuals. 
+
+```{r}
+res.hcpc$desc.ind
+```
+
+Finally, we also look at the cateegorical variables for clues on clusters: 
+
+```{r}
+res.hcpc$desc.var$test.chi2
+```
+
+The variable Impermeability and Raw.Materials seem to be very siginificatively linked to partioning, with Shape and Supplier also significant to a certaint extent. For each qualitative variable, we perform a chi2 test between it and the class variable and then sort the variables by increasing p-value
+
+```{r}
+res.hcpc$desc.var$category
+```
+
+We can confirm that the these qualitative variables play a significant role in each of the clusters individually as well. 
+
+Finally, we link this all back to our PCA - 
+
+```{r}
+res.hcpc$desc.axes
+```
+
+The information above suggests there is strong relationships between the clusters and the dimensions:
+cluster 1 - have coordinates signicantly smaller to 0 in the first dimension and second dimension but coordinates signficantly greater than 0 in the third dimension.
+cluster 2 - have coordinates signicantly smaller to 0 in the first dimension and third dimension but coordinates signficantly greater than 0 in the second dimension.
+cluster 3 - have coordinates signicantly greater to 0 in the first dimension. 
+
+This is extremely insightful when we consider the analysis we have performed previously. 
+
+In english, the summary of the above analysis can be written as: 
+
+The cluster 1 is made of individuals such as specific individual 77 sharing :
 - high values for the variable Mature.Volume. 
 - low values for the variables nb.of.pieces, Price, weight, Length and Diameter (variables are sorted from the weakest).
 
-The cluster 2 is made of individuals sharing :
+The cluster 2 is made of individuals sharing such as specific individual 183 sharing:
 - high values for the variable nb.of.pieces. 
 - low values for the variables Mature.Volume, Diameter, Length, weight and Price (variables are sorted from the weakest).
 
-The cluster 3 is made of individuals such as 89, 90, 131, 161, 163 and 164. This group is characterized by :
+The cluster 3 is made of individuals such as specific individual 84 sharing :
 - high values for the variables Length, Diameter, weight and Price (variables are sorted from the strongest).
 - low values for the variables nb.of.pieces and Mature.Volume (variables are sorted from the weakest).
 
+
 ```{r}
-res.hcpc$desc.var
 ```
 
+*13) If someone ask you why you have selected k components and not k + 1 or k − 1, what is your answer? (could you suggest a strategy to assess the stability of the approach? - are there many differences between the clustering obtained on k components or on the initial data)*
+
+In the Husson textbook, it is suggested to test the percentage intertia expressed by a component and then the percentage of inertia expressed by the first plane. The method simulates 10,000 datasets for 191 individual sand 11 normally distributed independent variables - this allow us to make a comparison by taking into account the number of active individuals and active variables. It then conduct a standardised PCA for each dataset and calculates the percentage of inertia explained by one component and the that expressed by one plane. Then, the method defines the quantile 0.95 of the 10,000 percentages of inertia of the first component (and the first plane, respectively) obtained. Comparing the percentage of inertia of a component or plane with the associated value in the table then amounts to testing the null hypothesis H0: the percentage of inertia explained by the first component (and the first plane, respectively) is not significantly greater than that obtained with the (normally distributed) independent data.
+
+The first two dimensions of PCA express 83.48% of the total dataset inertia - this value is strongly greater than the reference value that equals 48.22%.  This would suggest it is probably not useful to interpret the next dimensions.
+
+However, this method might discard significant information. Consequently, will use the methodology previously 
+
+A strategy to assess the stability of the approach is to do the same study that we did but for the hcpc with 2 and 4 compenent. Then, we will be able to compare the different p-values for each configuration and see going form 2 to 3 or from 3 to 4 have a significant impact on the results of our clustering. After doing this study we noticed that we have the same p-value results for $k=3$ and $k=4$. Plus, we noticed that we have the p-value results are in average better for $k=3$ than $k=2$. This insights explain us that 3 components is the best compromise and choice. On the same vein, we noticed that there a no difference in terms of cluster description for a clustering obtained on k components or on the initial data.
+
+The methodology that we have used to describe clusters can also be used to describe a categorical variable, for instance the supplier.
 
 
-
-
-*If someone ask you why you have selected k components and not k + 1 or k − 1, what is your answer? (could you suggest a strategy to assess the stability of the approach? - are there many differences between the clustering obtained on k components or on the initial data)*
 
 ```{r}
 res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=4)
@@ -373,7 +449,6 @@ Characterization of each supplier
 ```{r}
 catdes(raw_data, num.var=1)
 catdes(raw_data, num.var=5)
-
 catdes(raw_data, num.var=6)
 
 
@@ -445,8 +520,6 @@ predict_new_price <- function (x) {
 
 Below we count the amount of data points we have for each supplier. We have to consider the advantages and the pitfalls of building a local vs. global models.
 
-
-
 ```{r}
 raw_data %>% group_by(Supplier) %>%  count()
 ```
@@ -457,9 +530,5 @@ raw_data %>% group_by(Supplier) %>%  count()
 ```{r}
 
 summary(res.hcpc.famd)
-
-res.hcpc.famd$call$X$Dim.1
-
-
 ```
 
