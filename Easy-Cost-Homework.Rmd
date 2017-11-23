@@ -540,12 +540,6 @@ raw_data %>% group_by(Supplier) %>%  count()
 
 **18) These data contained missing values. One representative in the company suggests either to put 0 in the missing cells or to impute with the median of the variables. Comment. For the categorical variables with missing values, it is decided to create a new category “missing”. Comment.**
 
-Median imputation will enable similar results to mean imputation (but with less sensitivity to outliers vs. mean). Single imputation with the medians will preserve the median but 
-since the variability in the data will be reduced, the standard deviations and the variance estimates will tend to be underestimated. The magnitude of the covariances and correlation also decrease by restricting the variability. Thus the variance and correlation structure will be distorted. 
+Imputation with the median or replacing the missing values with 0 will have similar results to mean imputation in the sense that replacing with a constant alters the structure structure of the dataset. The variability in the data will be reduced and the relationships between variables will be igorned. Thus the variance estimates will tend to be underestimated and the magnitude of the correlation also decrease. Overall, the variance and correlation structure will be distorted but this procedure can give satisfactory results if not too much data is missing. 
 
-However
-
-The first idea will change all the structure of our data becaue it will change the correlation between the different variables. The second idea will not fix the problem and will change nothing because this method only renames the "NA" category to a "missing" category. 
-
-
-The latter consists in imputing with the predicted values from a regression model plus a random noise drawn from a normal distribution with variance equal to the residual variance.
+Creating a new category for each variable which contains one or more missing values can be an effective way of tackling missing values. A variable will have an extra category if at least one individual possesses missing data for variable this variable. It will therefore be possible to conduct the MCA on the new data table by considering the missing categories in the same way as the other categories. In practice, this detects the structure of the missing data in the dataset and enables the structure of the missing data to be viewed. Examining the organisation of missing data and understanding why certain individuals did not answer a group of questions can be informative but it also leads to excessive structuring of the dataset and can conceal the information held within the answers. 
