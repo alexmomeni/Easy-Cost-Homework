@@ -480,7 +480,9 @@ coordinates
 ```{r}
 
 
-fit <- lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6,raw_data_clust)
+fit <- lm(Price ~ Diameter + Length + weight + Raw.Material + Impermeability, data= learning_set)
+
+
 p <- raw_data_clust[1,]
 
 predict_price <- function (x) {
@@ -491,9 +493,11 @@ predict_price <- function (x) {
 }
 
 
-percentage_learning <- 0.80
+learning_set <- sample_n(raw_data, runif(1,min=0.2,max=1) * dim(raw_data)[1])
+test_set <- raw_data[!learning_set,]
 
-learning_set <- sample_n(raw_data_clust, percentage_learning * dim(raw_data_clust)[1])
+fit <- lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6,raw_data_clust)
+
 res.famd_learning <- FAMD (learning_set, ncp = 5, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
 res.hcpc.famd_learning <- HCPC(res.famd_learning, nb.clust = -1
                 , graph = TRUE)
@@ -513,6 +517,15 @@ predict_new_price <- function (x) {
 }
 
 
+library(gbm)
+
+fit <- lm(Price ~ Diameter + Length + weight + Raw.Material + Impermeability + Shape, data= training_data_set)
+summary(fit)
+predicted_price <- predict.lm(fit,testing_data_set)
+real_price <- testing_data_set$Price
+Prediction <-  data_frame(predicted_price,real_price) %>% mutate(difference = abs(predicted_price-real_price))
+
+
 ```
 
 
@@ -525,10 +538,14 @@ raw_data %>% group_by(Supplier) %>%  count()
 ```
 
 
-**18) These data contained missing values. One representative in the compagny suggests either to put 0 in the missing cells or to impute with the median of the variables. Comment. For the categorical variables with missing values, it is decided to create a new category “missing”. Comment.**
+**18) These data contained missing values. One representative in the company suggests either to put 0 in the missing cells or to impute with the median of the variables. Comment. For the categorical variables with missing values, it is decided to create a new category “missing”. Comment.**
 
-```{r}
+Median imputation will enable similar results to mean imputation (but with less sensitivity to outliers vs. mean). Single imputation with the medians will preserve the median but 
+since the variability in the data will be reduced, the standard deviations and the variance estimates will tend to be underestimated. The magnitude of the covariances and correlation also decrease by restricting the variability. Thus the variance and correlation structure will be distorted. 
 
-summary(res.hcpc.famd)
-```
+However
 
+The first idea will change all the structure of our data becaue it will change the correlation between the different variables. The second idea will not fix the problem and will change nothing because this method only renames the "NA" category to a "missing" category. 
+
+
+The latter consists in imputing with the predicted values from a regression model plus a random noise drawn from a normal distribution with variance equal to the residual variance.
