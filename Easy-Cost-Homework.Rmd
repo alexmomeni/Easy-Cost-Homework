@@ -42,6 +42,7 @@ summary(raw_data)
 From the quantile data, the summary statistics are given by: median, 1Q and 3Q  as 14.432, 11.864 and 19.04 respectively. 
 
 The plots, the kurtosis and the skewness parameters suggest the price follows a bimodal distribution that is "skewed right". 
+
 The major mode is around 14 and the antimode is around 29. Furthermore, 50% of the prices in the range 11.864 and 19.04. This is consistent with graph where the majority of the density is concentrated inside this range and a long right tail of prices outside. 
 
 The boxplot supports this analyis and suggests the values in the tail are outliers. 
@@ -70,7 +71,9 @@ price_quantile
 skewness(raw_data$Price)
 kurtosis(raw_data$Price)
 
+
 ```
+
 
 
 *b) Does the Price depend on the Length? weight?*
@@ -129,10 +132,13 @@ Second, examine the following relative metrics:
 3) Average Price / Unit Length - Supplier A (1.505043)
 4) Average Price / Unit weight - Supplier A (9.013902)
 5) Average Price / Unit Diameter - Supplier A (11.95632)
+6) Average Price / Unit Mature.Volume - Supplier B (1.663305)
 
 The result above suggest Supplier A has the cheapest average price per unit of production.
 
-The analysis however is not complete given we do not have a definition of cheapest price. Even the scatter and box plots below suggest suppliers may cater to specific product ranges. It also ignores the categorical data which could provide some insights into cheapest price for certain product features Furthermore, we have not performed  statistical tests to examine the significance of these differences. 
+The analysis however is not complete given we do not have a definition of cheapest price. Even the scatter and box plots below suggest suppliers may cater to specific product ranges. We also have little data for Supplier C. We have not performed  statistical tests to examine the significance of these differences. 
+
+Furthermore, the analysis ignores the categorical data which could provide some insights into cheapest price for certain product features. 
 
 ```{r}
 
@@ -141,7 +147,7 @@ supplier_plot_2 <- ggscatter(raw_data,x="Length",y="Price",color = "Supplier", p
 supplier_plot_3 <- ggscatter(raw_data,x="weight",y="Price",color = "Supplier", palette = c("darkblue","red","darkgreen"),xscale= "log10", yscale="log10")
 supplier_plot_4 <- ggscatter(raw_data,x="Diameter",y="Price",color = "Supplier", palette = c("darkblue","red","darkgreen"),xscale= "log10", yscale="log10")
 
-supplier_statistics <- raw_data %>% group_by(Supplier) %>%  summarise( "Average Price" = mean(Price), "Average Length" = mean(Length),"Average weight" = mean(weight),"Average Diameter" = mean(Diameter),  "Average Price / Length" = mean(Price)/mean(Length), "Average Price / weight" = mean(Price)/mean(weight), "Average Price / Diameter" = mean(Price)/mean(Diameter))
+supplier_statistics <- raw_data %>% group_by(Supplier) %>%  summarise( "Average Price" = mean(Price), "Average Length" = mean(Length),"Average weight" = mean(weight),"Average Diameter" = mean(Diameter),"Average Mature.Volume" = mean(Mature.Volume)  ,"Average Price / Length" = mean(Price)/mean(Length), "Average Price / weight" = mean(Price)/mean(weight), "Average Price / Diameter" = mean(Price)/mean(Diameter),"Average Price / Mature.Volume" = mean(Price)/mean(Mature.Volume))
 
 supplier_plot_1
 supplier_plot_2
@@ -215,7 +221,6 @@ plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 **5) Compute the correlation matrix between the variables and comment it with respect to the correlation circle**
 
 The first task is to center and standardize the variables. Then the correlation matrix is computed. All variable vectors are quite near to the boundary of the correlation circle on the variables plot - thus the variables are relatively well projected on the 2 dimensional subspace. We now turn our attention to correlations between variables. 
-
 The correlations can be visualised through the angles between variables on the correlation matrix. This can be related to the correlation matrix (small angles suggest large positive correlation, 90 degree angles suggest no correlation, 180 degree angles suggest large negative correlation).
 - Diameter, Length and weight expose very strong corrleation: the angle between them is close to 0, suggesting correlation close to 1. These are all very highly correlated to the first Principal Component.
 - The three variables above are at an angle sightly wider than a right angle to both nb.of.pieces and Mature.Volume in the cirlce which suggests slightly negative correlation.
@@ -232,25 +237,24 @@ plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 **6) On what kind of relationship PCA focuses? Is it a problem?**
 
 PCA focuses on the linear relationships between continuous variables. Given complex links also exist, such as quadratic relationships, logarithmics, exponential functions, and so forth, this may seem restrictive, but in practice many relationships can be considered linear, at least for an initial approximation. However, there is obviously non-linear datasets for which PCA will have pitfalls (e.g. spiral dataset). Furthermore, in PCA categorical variables cannot be active variables, which can be restrictive. 
-
 **7) Comment the PCA outputs**
 
 *Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.*
 
-The coordinates for Type 2 are (3.30430162 , 0.0020023422) for the first two principal components 
-The coordinate for PS are (2.69084507 -0.2539199538) for the first two principal components 
+The coordinates for Type 2 are (3.30430162 , 0.0020023422) for the first two principal components. It has a very significant p value for Dim 1 -  the coordinate issignificantly different from 0 on the first component. 
+The coordinate for PS are (2.69084507 -0.2539199538) for the first two principal components. It has a very significant p value for Dim 1-  the coordinate issignificantly different from 0 on the first component. 
 
-Both categories have a high coordinate for the first principal component. Given the correlation circle shows high correlation between the first component and price, diameter, length and weight, this suggest Type 2 and PS have high values for these variables. 
+Furthermore, given the correlation circle shows high correlation between the first component and price, diameter, length and weight, this suggest Type 2 and PS have high values for these variables. 
 
 
 ```{r}
 res.pca$quali.sup$coord
-dimdesc(res.pca)
+dimdesc(res.pca, 1:2)
 ```
 
 *Comment the percentage of inertia*
 
-Below in the Scree we see the percentage of inertia explained by each component. Over 95% of the variance can be explained with the 3 first synthetic vectors in the PCA. Furthermore, we can see that the variance of the first component is explained in majority by Diameter, Length and weight as expected. In the second and thurd dimension by nb.of.pieces and Mature.Volume. 
+Below in the Scree plot we see the percentage of inertia explained by each component. Over 95% of the variance can be explained with the 3 first synthetic vectors in the PCA. Furthermore, we can see that the variance of the first component is explained in majority by Diameter, Length and weight as expected. In the second and third dimension by nb.of.pieces and Mature.Volume. 
 
 ```{r}
 res.pca$eig
@@ -270,12 +274,11 @@ res.pca$var$coord[,1:2]
 
 **9) PCA is often used as a pre-processing step before applying a clustering algorithm, explain the rationale of this approach and how many components k you keep.**
 
-We chose the maximum number of components as to not to loose any information, but want to discard the last components that can be considered as noise. Consequently, we keep the number of dimensions such that we keep 95% of the inertia in PCA, which is equivalent to 3 components in our analysis. 
-
+We chose the maximum number of components as to not to lose any significant information whilst discarding the components that can be considered as noise. Consequently, we keep the number of dimensions such that we keep 95% of the inertia in PCA, which is equivalent to 3 components in our analysis. 
 
 **10) Perfoms a kmeans algorithm on the selected k principal components of PCA. How many cluster are you keeping? Justify.**
 
-We us the Elbow method and look at the knee to determine the number of clusters we keep - here
+We us the Elbow method and look at the knee to determine the number of clusters we keep 3 clusters here. 
 
 ```{r}
 #Perform PCA on 3 Principal Components
@@ -287,11 +290,11 @@ fviz_nbclust(res.pca_3$ind$coord, kmeans, method = "wss") + geom_vline(xintercep
 #Kmeans Algorithm 
 k_cluster <- kmeans(res.pca_3$ind$coord, 3)
 k_mean_data <- as.matrix(res.pca_3$ind$coord)
-plot(k_mean_data, col = k_cluster$cluster, pch = 20, frame = FALSE,  main = "K-means with k=3")
+plot(k_mean_data, col = k_cluster$cluster, pch = 20, frame = FALSE,  main = "K-means")
 
 ```
 
-**11) Performs an AHC on the selected k principal components of PCA.**
+**11) Perform an AHC on the selected k principal components of PCA.**
 
 Below we perform an AHB on the select 3 principal components of PCA. 
 
@@ -305,12 +308,16 @@ plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title 
 plot.HCPC(res.hcpc, choice = 'bar', draw.tree = FALSE, title = 'Inertia Gain')
 plot.HCPC(res.hcpc, choice = '3D.map', draw.tree = FALSE, title = '', angle=60)
 
+summary(res.hcpc)
+
 ```
 
 
 **12) Comments the results and describe precisely one cluster.**
 
-The cluster 1 is made of individuals sharing :
+From the FactoInvestigate package, we get the basic analysis below:
+
+The cluster 1 is made of individuals sharing :4
 - high values for the variable Mature.Volume. 
 - low values for the variables nb.of.pieces, Price, weight, Length and Diameter (variables are sorted from the weakest).
 
@@ -324,7 +331,6 @@ The cluster 3 is made of individuals such as 89, 90, 131, 161, 163 and 164. This
 
 ```{r}
 res.hcpc$desc.var
-
 ```
 
 
@@ -436,6 +442,14 @@ predict_new_price <- function (x) {
 
 
 **17) If someone ask you why you did one global model and not one model per supplier, what is your answer?**
+
+Below we count the amount of data points we have for each supplier. We have to consider the advantages and the pitfalls of building a local vs. global models.
+
+
+
+```{r}
+raw_data %>% group_by(Supplier) %>%  count()
+```
 
 
 **18) These data contained missing values. One representative in the compagny suggests either to put 0 in the missing cells or to impute with the median of the variables. Comment. For the categorical variables with missing values, it is decided to create a new category “missing”. Comment.**
