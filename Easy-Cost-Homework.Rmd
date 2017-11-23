@@ -398,70 +398,64 @@ The cluster 3 is made of individuals such as specific individual 84 sharing :
 - low values for the variables nb.of.pieces and Mature.Volume (variables are sorted from the weakest).
 
 
-```{r}
-```
-
 *13) If someone ask you why you have selected k components and not k + 1 or k − 1, what is your answer? (could you suggest a strategy to assess the stability of the approach? - are there many differences between the clustering obtained on k components or on the initial data)*
 
 In the Husson textbook, it is suggested to test the percentage intertia expressed by a component and then the percentage of inertia expressed by the first plane. The method simulates 10,000 datasets for 191 individual sand 11 normally distributed independent variables - this allow us to make a comparison by taking into account the number of active individuals and active variables. It then conduct a standardised PCA for each dataset and calculates the percentage of inertia explained by one component and the that expressed by one plane. Then, the method defines the quantile 0.95 of the 10,000 percentages of inertia of the first component (and the first plane, respectively) obtained. Comparing the percentage of inertia of a component or plane with the associated value in the table then amounts to testing the null hypothesis H0: the percentage of inertia explained by the first component (and the first plane, respectively) is not significantly greater than that obtained with the (normally distributed) independent data.
 
-The first two dimensions of PCA express 83.48% of the total dataset inertia - this value is strongly greater than the reference value that equals 48.22%.  This would suggest it is probably not useful to interpret the next dimensions.
+The first two dimensions of PCA express 83.48% of the total dataset inertia - this value is strongly greater than the reference value that equals 48.22% using the methodology above. This would suggest it is probably not useful to interpret the next dimensions and would be the basis of k+1, k-1 decisions. 
 
-However, this method might discard significant information. Consequently, will use the methodology previously 
+However, this method might discard significant information. Consequently, we will want to use a methodology similar to the Elbow method - we perform HCPC with k-1, k and k+1 components and compare and contrast the results. Here this corresponds to 2,3 and 4 components. We notice that for all 3, HCPC will cut the tree at 3 clusters (visually the tree plots are similar).
 
-A strategy to assess the stability of the approach is to do the same study that we did but for the hcpc with 2 and 4 compenent. Then, we will be able to compare the different p-values for each configuration and see going form 2 to 3 or from 3 to 4 have a significant impact on the results of our clustering. After doing this study we noticed that we have the same p-value results for $k=3$ and $k=4$. Plus, we noticed that we have the p-value results are in average better for $k=3$ than $k=2$. This insights explain us that 3 components is the best compromise and choice. On the same vein, we noticed that there a no difference in terms of cluster description for a clustering obtained on k components or on the initial data.
+##Then, we will be able to compare the different p-values for each configuration and see going form 2 to 3 or from 3 to 4 have a significant impact on the results of our clustering. After doing this study we noticed that we have the same p-value results for $k=3$ and $k=4$. Plus, we noticed that we have the p-value results are in average better for $k=3$ than $k=2$. This insights explain us that 3 components is the best compromise and choice. On the same vein, we noticed that there a no difference in terms of cluster description for a clustering obtained on k components or on the initial data.##
 
-The methodology that we have used to describe clusters can also be used to describe a categorical variable, for instance the supplier.
-
-
+#######
 
 ```{r}
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=4)
-res.hcpc <- HCPC(res.pca, nb.clust = -1)
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=3)
-res.hcpc <- HCPC(res.pca, nb.clust = -1)
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=2)
-res.hcpc <- HCPC(res.pca, nb.clust = -1)
-```
-```{r}
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=4, scale=TRUE, graph = FALSE)
 res.hcpc <- HCPC(res.pca, nb.clust = -1, graph = FALSE)
+print(res.hcpc$desc.axes)
+plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map k=4')
 
-```
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, scale = TRUE, graph = FALSE)
+res.hcpc <- HCPC(res.pca, nb.clust = -1,graph = FALSE)
+print(res.hcpc$desc.axes)
+plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map k=3')
 
- 
-```{r}
+res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=2, scale = TRUE,graph = FALSE)
 res.hcpc <- HCPC(res.pca, nb.clust = -1, graph = FALSE)
-res.hcpc
-plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, title = '', select=c("12"))
-
-
-res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=3)
-res.hcpc <- HCPC(res.pca, nb.clust = -1, graph = FALSE)
-res.hcpc
+print(res.hcpc$desc.axes)
+plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map k=2')
 
 ```
 
-Characterization of each supplier
+
 
 **14) The methodology that you have used to describe clusters can also be used to describe a categorical variable, for instance the supplier. Use the function catdes(data, num.var=1) and explain how this information can be useful for the company.**
 
+From the chi squared tests, we have an indication that Raw.Material and Impermeability have statistical significance with regard to the different suppliers groups. In particular, we have the following characteristics for each supplier (from most significant to least significant): 
+Supplier A: PS, Type 2, Type 1, Shape 2 and ABS 
+Supplier B: Shape 2, ABS, PS ; nb.of.pieces
+Supplier C: PP; nb.of.pieces
+
+Given these are categories that best distinguish the different suppliers from one another and offer some characteristics, the cosmetics company could use this to benchmark them, which could be extremely useful. 
+
+catdes can be used on other categorical variables for such insights. 
+
 
 ```{r}
-catdes(raw_data, num.var=1)
-catdes(raw_data, num.var=5)
-catdes(raw_data, num.var=6)
-
-
+catdes_supplier<- catdes(raw_data, num.var=1)
+catdes_supplier
+plot(catdes_supplier, col = "darkblue")
 ```
 
 
 **15) To simultaneously take into account quantitative and categorical variables in the clustering you should use the HCPC function on the results of the FAMD ones. FAMD stands for Factorial Analysis of Mixed Data and is a PCA dedicated to mixed data. Explain what will be the impacts of such an analysis on the results?**
 
 ```{r}
+
 res.famd <- FAMD (raw_data, ncp = 5, graph = TRUE, sup.var =  c(10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
 
-res.hcpc.famd <- HCPC(res.famd, nb.clust = -1
-                , graph = TRUE)
+res.hcpc.famd <- HCPC(res.famd, nb.clust = -1, graph = FALSE)
 
 plot.HCPC(res.hcpc.famd, choice = 'map', draw.tree = FALSE, select = c(1,10), title = '')
 
