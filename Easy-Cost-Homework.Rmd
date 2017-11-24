@@ -27,7 +27,7 @@ library(moments)
 
 The data ScrewCap.csv contains 195 lots of screw caps described by 11 variables. Diameter, weight, length are the physical characteristics of the cap; nb.of.pieces corresponds to the number of elements of the cap; Mature.volume corresponds to the number of caps ordered and bought by the company (number in the lot).
 
-We first explore the dataset - 
+We first explore the dataset : 
 
 ```{r}
 
