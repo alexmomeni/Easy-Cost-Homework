@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "R Notebook - Screw Caps Case Study"
 output: html_notebook
 ---
 
@@ -25,7 +25,9 @@ library(moments)
 
 **Screw Caps Data**
 
-The data ScrewCap.csv contains 195 lots of screw caps described by 11 variables. Diameter, weight, length are the physical characteristics of the cap; nb.of.pieces corresponds to the number of elements of the cap (the picture above corresponds to a cap with 2 pieces: the valve (clapet) is made of a different material); Mature.volume corresponds to the number of caps ordered and bought by the company (number in the lot).
+The data ScrewCap.csv contains 195 lots of screw caps described by 11 variables. Diameter, weight, length are the physical characteristics of the cap; nb.of.pieces corresponds to the number of elements of the cap; Mature.volume corresponds to the number of caps ordered and bought by the company (number in the lot).
+
+We first explore the dataset - 
 
 ```{r}
 
@@ -80,7 +82,7 @@ kurtosis(raw_data$Price)
 
 We examine Price vs. Length, log(Price) vs. log(Length); Price vs. weight, log(Price) vs. log(weight) and provide the summary for each. 
 
-The plots suggest somewhat of a relationship between the variables, but observing the R-sqaured values and the results of the F and T tests confirm this to a high degree of significance. 
+The plots suggest somewhat of a relationship between the variables and observing the R-sqaured values and the results of the F and T tests confirm this to a high degree of significance. 
 
 ```{r}
 price_length <- ggplot(raw_data, aes(x=Length, y=Price)) + geom_point() + geom_smooth(method=lm, color="darkgreen")+ theme_minimal()
@@ -122,7 +124,7 @@ summary(lm(Price~ Shape, data=raw_data))
 
 *d) Which is the less expensive Supplier?*
 
-The answer to this question depends on the definition of expensive. 
+The answer to this question depends on the definition of expensive. We also note that there are few data points for Supplier C.
 
 First, examine the following absolute metrics (this can be seen via the boxplot)
 1) Absolute price - Supplier B cheapest (6.477451). However, Supplier B is also the supplier which has the highest absolute price (46.610372)
@@ -136,9 +138,7 @@ Second, examine the following relative metrics:
 
 The result above suggest Supplier A has the cheapest average price per unit of production.
 
-The analysis however is not complete given we do not have a definition of cheapest price. Even the scatter and box plots below suggest suppliers may cater to specific product ranges. We also have little data for Supplier C. We have not performed  statistical tests to examine the significance of these differences. 
-
-Furthermore, the analysis ignores the categorical data which could provide some insights into cheapest price for certain product features. 
+The analysis however is not complete given we do not have a definition of cheapest price. Even the scatter and box plots below suggest suppliers may cater to specific product ranges. We have not performed  statistical tests to examine the significance of these differences. Categorical data could provide some insights into cheapest price for certain product features. 
 
 ```{r}
 
@@ -175,7 +175,6 @@ raw_data %>% filter (Mature.Volume > 6e+05 )
 For the rest of the analysis, the 4 data points above are disregarded.
 
 ```{r}
-library(dplyr)
 raw_data <- raw_data %>% filter (Mature.Volume < 6e+05 )
 ```
 
@@ -203,7 +202,7 @@ The categorical variables cannot be represented in the same way as the supplemen
 Given our ultimate goal here is to explore data prior to a multiple regression, it is advisable to choose the explanatory variables for the regression model as active variables for PCA, and to project the variable to be explained (the dependent variable) as a supplementary variable. This gives some idea of the relationships between explanatory variables and thus of the need to select explanatory variables. This also gives us an idea of the quality of the regression: if the dependent variable is appropriately projected, it will be a well-fitted model. Thus we select Price as a supplementary variable. 
 
 The dataset in this exercise contains 6 supplementary variables:
-- 1 quantitative variable (Price)
+- 1 quantitative variable (Price).
 - 5 qualitative variables (Supplier, Shape, Impermeability and Finishing).  
 
 
@@ -241,7 +240,7 @@ plot.PCA(res.pca,choix = c("var"))+theme_minimal()
 
 PCA focuses on the linear relationships between continuous variables. Given complex links also exist, such as quadratic relationships, logarithmics, exponential functions, and so forth, this may seem restrictive, but in practice many relationships can be considered linear, at least for an initial approximation. However, there is obviously non-linear datasets for which PCA will have pitfalls (e.g. spiral dataset). Furthermore, in PCA categorical variables cannot be active variables, which can be restrictive. 
 
-**7) Comment the PCA outputs** ######FINISH THIS ###### WILKS TEST FROM FACTOMINER
+**7) Comment the PCA outputs** 
 
 *Comment the position of the categories Impermeability=type 2 and Raw.Material=PS.*
 
@@ -267,7 +266,7 @@ wilks.p
 
 Below in the Scree plot we see the percentage of inertia explained by each component. The first two components explain 83.48% of the total dataset inertial - this means that 83.50% of the individuals (or variables) cloud total variability is explained by this plane. Over 95% of the variance can be explained with the 3 first synthetic vectors in the PCA. 
 
-We can also see that the variance of the first component is explained in majority by Diameter, Length and weight as expected. In the second and third dimension by nb.of.pieces and Mature.Volume respectively representing large contribution (~60%). 
+We can also see that the variance of the first component is explained in majority by Diameter, Length and weight as expected. In the second dimension by nb.of.pieces and Mature.Volume. 
 
 ```{r}
 res.pca$eig
@@ -296,13 +295,8 @@ We us the Elbow method and look at the knee to determine the number of clusters 
 Recall that, the basic idea behind k-means clustering is to define clusters such that the total within-cluster variation is minimized. The total WSS measures the compactness of the clustering and we want it to be as small as possible. The Elbow method looks at the total WSS as a function of the number of clusters: one should choose a number of clusters so that the marginal cluster doesn’t improve WSS. Here this value is 3. 
 
 ```{r}
-#Perform PCA on 3 Principal Components
 res.pca_3 <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, graph = FALSE, scale = TRUE) 
-
-#Use the Elbow method to determine the number of clusters to keep
 fviz_nbclust(res.pca_3$ind$coord, kmeans, method = "wss") + geom_vline(xintercept = 3, linetype = 2)
-
-#Kmeans Algorithm 
 k_cluster <- kmeans(res.pca_3$ind$coord, 3)
 k_mean_data <- as.matrix(res.pca_3$ind$coord)
 plot(k_mean_data, col = k_cluster$cluster, pch = 20, frame = FALSE,  main = "K-means")
@@ -315,18 +309,12 @@ Below we perform an AHC on the select 3 principal components of PCA.
 ```{r}
 
 res.pca_3 <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, graph = FALSE, scale = TRUE) 
-
 res.hcpc <- HCPC(res.pca_3, nb.clust = -1, graph = FALSE)
 
 plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map')
 plot.HCPC(res.hcpc, choice = 'bar', draw.tree = FALSE, title = 'Inertia Gain')
 plot.HCPC(res.hcpc, choice = '3D.map', draw.tree = FALSE, title = 'Hierarchical Clustering on the Factor Map', angle=60)
 plot.HCPC(res.hcpc, choice = 'tree', draw.tree = FALSE, title = 'Hierarchical Clustering')
- 
-res.hcpc$call$t$within[1:5]
-res.hcpc$call$t$within[1:5]
-1 - (res.hcpc$call$t$within[3]/res.hcpc$call$t$within[1])
-
 ```
 
 
@@ -362,7 +350,7 @@ Finally, we also look at the cateegorical variables for clues on clusters:
 res.hcpc$desc.var$test.chi2
 ```
 
-The variable Impermeability and Raw.Materials seem to be very siginificatively linked to partioning, with Shape and Supplier also significant to a certaint extent. For each qualitative variable, we perform a chi2 test between it and the class variable and then sort the variables by increasing p-value
+The variable Impermeability and Raw.Materials seem to be very siginificatively linked to partioning, with Shape and Supplier also significant to a certaint extent. For each qualitative variable, we perform a chi2 test between it and the class variable and then sort the variables by increasing p-value.
 
 ```{r}
 res.hcpc$desc.var$category
@@ -370,7 +358,8 @@ res.hcpc$desc.var$category
 
 We can confirm that the these qualitative variables play a significant role in each of the clusters individually as well. 
 
-Finally, we link this all back to our PCA - 
+
+We link this all back to our PCA - 
 
 ```{r}
 res.hcpc$desc.axes
@@ -404,26 +393,24 @@ In the Husson textbook, it is suggested to test the percentage intertia expresse
 
 The first two dimensions of PCA express 83.48% of the total dataset inertia - this value is strongly greater than the reference value that equals 48.22% using the methodology above. This would suggest it is probably not useful to interpret the next dimensions and would be the basis of k+1, k-1 decisions. 
 
-However, this method might discard significant information. Consequently, we will want to use a methodology similar to the Elbow method - we perform HCPC with k-1, k and k+1 components and compare and contrast the results. Here this corresponds to 2,3 and 4 components. We notice that for all 3, HCPC will cut the tree at 3 clusters (visually the tree plots are similar).
+However, this method might discard significant information. Consequently, we will use a methodology similar to the Elbow method - we perform HCPC with k-1, k and k+1 components and compare and contrast the results. For example, we could look at the quality and significance gain that each PCA offers when anaylysing the clusters. Here this corresponds to 2,3 and 4 components. We notice that for all 3, HCPC will cut the tree at 3 clusters (visually the three plots are similar). However, after analysing the p-values we notice that there is an improvement from going to 2 to 3 whereas from p-values for 3 and 4 are very similar. 
 
-##Then, we will be able to compare the different p-values for each configuration and see going form 2 to 3 or from 3 to 4 have a significant impact on the results of our clustering. After doing this study we noticed that we have the same p-value results for $k=3$ and $k=4$. Plus, we noticed that we have the p-value results are in average better for $k=3$ than $k=2$. This insights explain us that 3 components is the best compromise and choice. On the same vein, we noticed that there a no difference in terms of cluster description for a clustering obtained on k components or on the initial data.##
-
-#######
 
 ```{r}
 res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=4, scale=TRUE, graph = FALSE)
 res.hcpc <- HCPC(res.pca, nb.clust = -1, graph = FALSE)
-print(res.hcpc$desc.axes)
+res.hcpc$desc.var
 plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map k=4')
+
 
 res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10, ncp=3, scale = TRUE, graph = FALSE)
 res.hcpc <- HCPC(res.pca, nb.clust = -1,graph = FALSE)
-print(res.hcpc$desc.axes)
+res.hcpc$desc.var
 plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map k=3')
 
 res.pca <- PCA(raw_data,quali.sup = c(1,5,6,7,9),quanti.sup = 10,ncp=2, scale = TRUE,graph = FALSE)
 res.hcpc <- HCPC(res.pca, nb.clust = -1, graph = FALSE)
-print(res.hcpc$desc.axes)
+res.hcpc$desc.var
 plot.HCPC(res.hcpc, choice = 'map', draw.tree = FALSE, select = "cos2 5", title = 'Factor Map k=2')
 
 ```
@@ -437,9 +424,7 @@ Supplier A: PS, Type 2, Type 1, Shape 2 and ABS
 Supplier B: Shape 2, ABS, PS ; nb.of.pieces
 Supplier C: PP; nb.of.pieces
 
-Given these are categories that best distinguish the different suppliers from one another and offer some characteristics, the cosmetics company could use this to benchmark them, which could be extremely useful. 
-
-catdes can be used on other categorical variables for such insights. 
+Given these are categories that best distinguish the different suppliers from one another and offer some characteristics, the cosmetics company could use this to benchmark them, which could be extremely useful. catdes can be used on other categorical variables for such insights. 
 
 
 ```{r}
@@ -451,81 +436,69 @@ plot(catdes_supplier, col = "darkblue")
 
 **15) To simultaneously take into account quantitative and categorical variables in the clustering you should use the HCPC function on the results of the FAMD ones. FAMD stands for Factorial Analysis of Mixed Data and is a PCA dedicated to mixed data. Explain what will be the impacts of such an analysis on the results?**
 
+In FAMD, the influence of both continous and categorical variables in the analysis is balanced. It means that both variables are on a equal foot to determine the dimensions of variability. Thus FAMD thus changes the correlation and variance structures of the previous analysis. The variance explained by each component reduces such that we would need 10 components to explain 95% of total variance. 
+
+Looking at the graphs, the Price continues to be strongly correlated to the first component, as are weight Length, Diameter, Impermeability and Raw.Materials. Shape is also somewhat well correlated to the first component and thus to Price.  However, Finishing, Mature.Volume are not well represented on the map and Supplier and nb.of.pieces are correlated to the second component and thus uncorrelated to Price.
+
+Furthermore, given many more components are taken into account to ensure information is not lost, the clustering is also affected and seems now less informative than previously. 
+
 ```{r}
 
-res.famd <- FAMD (raw_data, ncp = 5, graph = TRUE, sup.var =  c(10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
+res.famd <- FAMD (raw_data, sup.var = c(10), ncp = 10 , axes = c(1,2), row.w = NULL, tab.comp = NULL, graph = FALSE)
+res.famd$eig
+
+fviz_famd_var(res.famd, repel = TRUE)
+fviz_famd_var(res.famd, "quanti.var", col.var = "cos2", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), repel = TRUE)
+fviz_famd_var(res.famd, "quali.var", col.var = "cos2", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+fviz_famd_ind(res.famd, col.ind="cos2", label=c("quali"), geom = "point", habillage = "none") + scale_color_gradient2(low="lightblue", mid="blue", high="darkblue", midpoint=0.6) + theme_minimal() 
 
 res.hcpc.famd <- HCPC(res.famd, nb.clust = -1, graph = FALSE)
-
 plot.HCPC(res.hcpc.famd, choice = 'map', draw.tree = FALSE, select = c(1,10), title = '')
 
-raw_data_clust <- res.hcpc.famd$data.clust
 
-res.famd_2 <- FAMD (raw_data_clust, ncp = 6, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
-res.famd_2$eig
 
-coordinates <- as.data.frame(res.famd_2$ind$coord)
-coordinates$Price <- raw_data_clust$Price
-coordinates
 ```
 
-16) Perform a model to predict the Price. Explain how the previous analysis can help you to interpret the results.
+**16) Perform a model to predict the Price. Explain how the previous analysis can help you to interpret the results.**
+
+We first split our datta into training and test sets. Here we will generate a random sample from the data which will consist of 70% to 90% of the rows in the original data to train the model on and will test on the remaining rows. 
+
+The variables we chose for our linear model will be those which we have seen are most siginificant for Price from our analysis - namely: 
+- Price, Diameter, Length 
+- Impermeability, Raw.Materials, Shape
+
+Notice tht the R squared of the regression is satisfactory. 
 
 ```{r}
+training_set <- sample_n(raw_data, round((runif(1,min=0.70,max=0.90) * dim(raw_data)[1]),0) )
+dim(training_set) 
+test_set <- raw_data[!(raw_data$Length %in% training_set$Length),]
+dim(test_set) 
+assertthat::are_equal(dim(training_set)[1]+ dim(test_set)[1] ,dim(raw_data)[1])
 
+lm_fit <- lm(Price ~ Diameter + Length + weight + Raw.Material + Impermeability + Shape, data= training_set)
+lm_prediction <- predict.lm(lm_fit, test_set)
 
-fit <- lm(Price ~ Diameter + Length + weight + Raw.Material + Impermeability, data= learning_set)
-
-
-p <- raw_data_clust[1,]
-
-predict_price <- function (x) {
-  fit <-  lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6, raw_data_clust)
-  p <- as.data.frame(predict.FAMD(res.famd_2,x)$coord) 
-  p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
-  return(predict(fit,p))
-}
-
-
-learning_set <- sample_n(raw_data, runif(1,min=0.2,max=1) * dim(raw_data)[1])
-test_set <- raw_data[!learning_set,]
-
-fit <- lm(Price ~ coordinates$Dim.1 + coordinates$Dim.2 + coordinates$Dim.3 + coordinates$Dim.4 + coordinates$Dim.5 + coordinates$Dim.6,raw_data_clust)
-
-res.famd_learning <- FAMD (learning_set, ncp = 5, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
-res.hcpc.famd_learning <- HCPC(res.famd_learning, nb.clust = -1
-                , graph = TRUE)
-
-res.famd_learning_2 <- FAMD (learning_set_clust, ncp = 6, graph = TRUE, sup.var =  c(1,5,7,10), axes = c(1,2), row.w = NULL, tab.comp = NULL)
-
-learning_set_clust <- res.hcpc.famd_learning$data.clust
-coordinates_learning <- as.data.frame(res.famd_learning_2$ind$coord)
-coordinates_learning$Price <- learning_set_clust$Price
-coordinates_learning
-
-predict_new_price <- function (x) {
-  fit <-  lm(Price ~ coordinates_learning$Dim.1 + coordinates_learning$Dim.2 + coordinates_learning$Dim.3 + coordinates_learning$Dim.4 + coordinates_learning$Dim.5 + coordinates_learning$Dim.6, learning_set_clust)
-  p <- as.data.frame(predict.FAMD(res.famd_2,x)$coord) 
-  p <- p %>% rename(Dim1 = 'Dim 1', Dim2 = 'Dim 2',Dim3 = 'Dim 3',Dim4 = 'Dim 4', Dim5 = 'Dim 5', Dim6 = 'Dim 6')
-  return(predict(fit,p))
-}
-
-
-library(gbm)
-
-fit <- lm(Price ~ Diameter + Length + weight + Raw.Material + Impermeability + Shape, data= training_data_set)
-summary(fit)
-predicted_price <- predict.lm(fit,testing_data_set)
-real_price <- testing_data_set$Price
-Prediction <-  data_frame(predicted_price,real_price) %>% mutate(difference = abs(predicted_price-real_price))
-
-
+summary(lm_fit)
 ```
+
+We now wish to assess the the linear model. Obviously, the quality of the results depend on size and the quality of the training set, however we can see that in general, it performs poorly for prices in the tails of the price distribution. We can view the quantiles to have an idea of the precision of the prediction. Note we can make use our PCA performed above to interpret why certain individuals have been projected well or poorly here. This could be particularly insightful for the tails, since large price are underestimated here and low prices are overestimated. We note that one solution could be to add more weight to the data in the tails to regularise training set. 
+
+```{r}
+plot(test_set$Price,lm_prediction, ylab = "Predicted", xlab ="Actual") + abline(a=0,b=1)
+model_vs_test<- data_frame(lm_prediction,test_set$Price)
+
+residual_lm <- model_vs_test %>% mutate("Residual" = (lm_prediction - test_set$Price))
+plot(residual_lm$`test_set$Price`,residual_lm$Residual, xlab= "Actual", ylab = "Residual")
+
+quantile(abs(residual_lm$Residual))
+```
+
 
 
 **17) If someone ask you why you did one global model and not one model per supplier, what is your answer?**
 
-Below we count the amount of data points we have for each supplier. We have to consider the advantages and the pitfalls of building a local vs. global models.
+Below we count the amount of data points we have for each supplier. We see Supplier C only has 14 data points, thus performing a model per supplier may lead to overfitting and fail to predict future observations reliably. If we regularised our data, we may be able to perform this type of model. 
 
 ```{r}
 raw_data %>% group_by(Supplier) %>%  count()
