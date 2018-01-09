@@ -7,4 +7,4 @@ site.
 
 Before builing a model, it is important to explore the data which is the aim of this case study.
 
-This study was commissioned by a cosmetics company that wants to estimate the price of Screw Caps for shampoo bottles/
+This study was commissioned by a cosmetics company that wants to estimate the price of Screw Caps for shampoo bottles.
